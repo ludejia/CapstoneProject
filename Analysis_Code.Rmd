@@ -1,10 +1,21 @@
+---
+output:
+  html_document: rmarkdown::github_document
+  word_document: default
+  pdf_document: default
+---
+
+#```{r setup, include=FALSE}
+#knitr::opts_chunk$set(echo=FALSE,comment=NA,message=FALSE,warning = FALSE)
+#```
+
 # CKME 136 Capstone Project 
 # Melbourne House Sales Price Predictive Analysis
-### Dejia Lu
-### 501005537
+#### Driginal data and code can be found at https://github.com/ludejia/CapstoneProject
+#### Dejia Lu
+#### Ryerson University 501005537
 
 ## Introduction
-
 
 Since 2010, Melburne housing market was experiencing a housing bubble and some expert said it might burst soon.  However, there was a cooling period in 2018. The contributor of the housing market dataset was considering buying an apartment. He was seeking data experts to help him draw some insights on the data to assist his decision making.
 
@@ -22,16 +33,79 @@ In terms of feature selection and modeling building, An introduction to statisti
 
 
 ## Dataset
+
+The dataset I am using was posted on Kaggle and scraped by the contributor Pino(2018) from an Australian property website (Domain.com.au) for the period from 2016 to 2018. The data set contains the propterty information of has 34857 observations. Each observation has 21 attributes.
+Price is the attribute I am building model to predict. Below provides the summary for the data and visualizaiton of missing values.
+
 ```{r}
-DT <- c( 75, 79, 69, 78, 65, 87, 74, 81, 77, 88)
-LR <- c( 85, 68, 78, 73, 69, 76, 69, 80, 73, 67, 78, 82)
+library(ggplot2)
+library(ggmap)
+library(visdat)
+theme_set(theme_bw())
+options(scipen=999)
+house=read.csv('data/Melbourne_housing_FULL.csv')
+missing=sapply(house,function(x){sum(is.na(x))})
+missing=as.data.frame(missing,row.names = NULL)
+missing$var=colnames(house)
+missing$missing=missing$missing*100/nrow(house)
+missing=missing[order(missing$missing),]
+ggplot(missing)+geom_bar(aes(x=reorder(var, missing),y=missing),
+                         stat = "identity", fill='grey',color='black')+
+        coord_flip()+
+        labs(y='Missing Value Percentage',x='')
+vis_miss(house)
+```
 
+#### *Attributs explnation and selection*
+* Lattitude & Longtitude 
 
-mean(DT)
-mean(LR)
-wilcox.test(LR, DT, exact= F)
+They gave the GPS location on the map. 23% of the data are missing. Below we can visualize the location of the properties on google map and see which area has the high density of the property.
+```{r}
+register_google(key = "AIzaSyCyjfy52N-yvo76okcOhh4sc1wSqSMi8oI", write = TRUE)
+map=get_map(location='Melbourne',zoom = 10,maptype = "terrain",color = "bw",)
+ggmap(map)+geom_point(data = house, aes(x = house$Longtitude, y = house$Lattitude), 
+                 color ='red', size = 0.05,alpha=0.15)
 
 ```
+
+
+* Suburb, Postcode, Regionname, CouncilArea
+
+Suburb, Postcode, Regionname, CouncilArea divide Melbourne into deferent sections. Below we can find Suburb has the finest divisions (351) whereas regionname only has 9 divisions.
+```{r}
+Suburb=nrow(table(house$Suburb))
+RegionName=nrow(table(house$Regionname))
+CouncilArea=nrow(table(house$CouncilArea))
+PostalCode=nrow(table(house$Postcode))
+Division=data.frame(a=c('Suburb',"RegionName",'CouncilArea','PostalCode'),
+                    b=c(Suburb,RegionName,CouncilArea,PostalCode))
+ggplot(Division)+geom_bar(aes(x=reorder(a, b),y=b),
+                         stat = "identity", fill='grey',col='black', width=0.6)+
+        coord_flip()+
+        labs(y='Number of Cateories',x='')
+
+
+
+```
+
+Maps show the boundaries of Suburb, Postal Code, Council and Region.
+![](./map/map.png)
+* Building Type
+
+
+```{r}
+house$Type=as.character(house$Type)
+house[house$Type=='u',]$Type='unit'
+house[house$Type=='h',]$Type='house'
+house[house$Type=='t',]$Type='townhouse'
+house$Type=as.factor(house$Type)
+ggplot(house)+geom_bar(aes(x=house$Type),fill='grey',width = 0.3,col='black')+
+        labs(x='house type')
+
+```
+
+
+* Builing area & Landsize
 
 
 
@@ -58,6 +132,14 @@ Kahle, D., & Wickham, H. (2013). ggmap: Spatial visualization with ggplot2. The 
 James, G., Hastie, T., Tibshirani, R., & Witten, D. (2013). An introduction to statistical learning: With applications in R Springer New York.
 
 Hastie, T., Tibshirani, R., Friedman, J. H., & SpringerLink (Online service). (2009;2013;2001;). The elements of statistical learning: Data mining, inference, and prediction (2nd ed.). New York, NY: Springer. doi:10.1007/978-0-387-21606-5
+
+Pino, T. P. (2018, October 14). Melbourne Housing Market. Retrieved May 7, 2020, from https://www.kaggle.com/anthonypino/melbourne-housing-marke
+
+Melbourne Suburb Map. (n.d.). Retrieved June 7, 2020, from http://melbournesuburbsmap.com
+
+LocalCouncilMaps. (n.d.). Retrieved June 7, 2020, from https://enrol.vec.vic.gov.au/ElectoralBoundaries/LocalCouncilMaps.html
+
+Melbourne Regions. (n.d.). Retrieved June 7, 2020, from https://www.education.vic.gov.au/about/department/structure/Pages/regions.aspx
 
 
 
