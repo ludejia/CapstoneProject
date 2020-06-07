@@ -22,13 +22,17 @@ In terms of feature selection and modeling building, An introduction to statisti
 
 
 ## Dataset
+```{r}
+DT <- c( 75, 79, 69, 78, 65, 87, 74, 81, 77, 88)
+LR <- c( 85, 68, 78, 73, 69, 76, 69, 80, 73, 67, 78, 82)
 
-```{r, echo=FALSE, results='hide'}
 
-library(datasets)
-data("airquality")
-summary(airquality)
+mean(DT)
+mean(LR)
+wilcox.test(LR, DT, exact= F)
+
 ```
+
 
 
 ## Approach
@@ -54,4 +58,6 @@ Kahle, D., & Wickham, H. (2013). ggmap: Spatial visualization with ggplot2. The 
 James, G., Hastie, T., Tibshirani, R., & Witten, D. (2013). An introduction to statistical learning: With applications in R Springer New York.
 
 Hastie, T., Tibshirani, R., Friedman, J. H., & SpringerLink (Online service). (2009;2013;2001;). The elements of statistical learning: Data mining, inference, and prediction (2nd ed.). New York, NY: Springer. doi:10.1007/978-0-387-21606-5
+
+
 
