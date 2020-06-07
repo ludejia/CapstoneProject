@@ -1,3 +1,9 @@
+---
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
 # CKME 136 Capstone Project 
 # Melbourne House Sales Price Predictive Analysis Literatuure Review
 ### Dejia Lu
