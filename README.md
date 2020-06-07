@@ -31,7 +31,7 @@ wilcox.test(LR, DT, exact= F)
 
 ```
 
- ![](./map/melbourne suburb map.png | width=100)
+ ![](./map/melbourne suburb map.png)
 
 
 ## Approach
