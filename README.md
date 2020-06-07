@@ -25,14 +25,13 @@ In terms of feature selection and modeling building, An introduction to statisti
 ```{r}
 DT <- c( 75, 79, 69, 78, 65, 87, 74, 81, 77, 88)
 LR <- c( 85, 68, 78, 73, 69, 76, 69, 80, 73, 67, 78, 82)
-
-
 mean(DT)
 mean(LR)
 wilcox.test(LR, DT, exact= F)
 
 ```
 
+ ![](./map/melbourne suburb map.png | width=100)
 
 
 ## Approach
