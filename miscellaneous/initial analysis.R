@@ -57,13 +57,9 @@ options(scipen=999)
 #You will also need to enalble the following two APIs in cloud to let the functions working
 #Map Static API, Geocoding API
 register_google(key = "AIzaSyCyjfy52N-yvo76okcOhh4sc1wSqSMi8oI", write = TRUE)
-
-
 map=get_map(location='Melbourne',zoom = 10,maptype = "terrain",color = "bw",)
-test=ggmap(map)
-house=read.csv('/Users/dejialu/Documents/Data Science/Ryerson/CKME136/Project/data/Melbourne_housing_FULL.csv')
-test+ geom_point(data = house, aes(x = house$Longtitude, y = house$Lattitude), 
-                 color ='blue', size = 0.1,alpha=0.20)
+ggmap(map)+geom_point(data = house, aes(x = house$Longtitude, y = house$Lattitude), 
+                 color ='red', size = 0.05,alpha=0.15)
 
 (house)
 
@@ -76,7 +72,6 @@ library(visdat)
 vis_miss(house)
 
 sapply(house,function(x){sum(is.na(x))})
-
 missing=sapply(house,function(x){sum(is.na(x))})
 missing=as.data.frame(missing,row.names = NULL)
 missing$var=colnames(house)
@@ -86,7 +81,8 @@ missing=missing[order(missing$missing),]
 missing
 ggplot(missing)+geom_bar(aes(x=reorder(var, missing),y=missing),
                          stat = "identity", fill='grey',)+
-        coord_flip()
+        coord_flip()+
+        labs(x='percentage missing')
 
 
 upset(airquality,nsets = 3, number.angles = 30)
@@ -172,8 +168,18 @@ table(house$Rooms, useNA ='always')
 
 library(ggplot2)
 theme_set(theme_bw())
-plot=ggplot(house)
-plot+geom_bar(aes(x=house$Rooms), fill='blue')+
+
+table(house$Rooms, useNA = 'always')
+table(house$Bedroom2, useNA = 'always')
+
+test=house[house$Bedroom2==0 & !is.na(house$Bedroom2),]
+
+ggplot(house)+geom_bar(aes(x=house$Rooms), fill='blue')+
+        coord_cartesian(xlim=c(0,16),)+ 
+        scale_x_continuous(breaks=seq(0, 16, 1))+
+        labs(x='Number of Room')
+
+ggplot(house)+geom_bar(aes(x=house$Bedroom2), fill='grey',col='black')+
         coord_cartesian(xlim=c(0,16),)+ 
         scale_x_continuous(breaks=seq(0, 16, 1))+
         labs(x='Number of Room')
@@ -186,7 +192,7 @@ house$Type
 sum(is.na(house$Type))
 table(house$Type, useNA ='always')
 
-g+geom_bar(aes(x=house$Type),fill='blue',width = 0.5)+
+ggplot(house)+geom_bar(aes(x=house$Type),fill='grey',width = 0.3,col='black')+
         labs(x='house type')
 
 
@@ -208,22 +214,24 @@ g+geom_histogram(aes(x=house$Price, fill=house$Type),
 
 #house$Method        
 table(house$Method, useNA ='always')
-g+geom_bar(aes(x=house$Method), fill='blue',
+ggplot(house)+geom_bar(aes(x=house$Method), fill='grey', col='black',
               width = 0.5)+
-        theme(axis.text.x = element_text(angle = 30,
-                                         vjust = 0.5))
+        theme(axis.text.x = element_text(angle = 30,vjust = 0.5))+
+        labs(x='method')
         
 
 #house$SellerG
 #remove
 
 #houes$date
+library(lubridate)
 
 df_avghouseprice=aggregate(house$Price~house$Date,house,mean)
-class(df_avghouseprice)
+df_avghouseprice
+df_avghouseprice$`house$Date`=dmy(df_avghouseprice$`house$Date`)
 colnames(df_avghouseprice)=c('Date','average sold price')
-plot_date=ggplot(df_avghouseprice)
-plot_date+geom_line(aes(x=df_avghouseprice$Date,y=df_avghouseprice$`average sold price`),
+df_avghouseprice
+ggplot(df_avghouseprice)+geom_line(aes(x=df_avghouseprice$Date,y=df_avghouseprice$`average sold price`),
                     color="red")+
         labs(x='date', y='average sold price')
 
@@ -291,17 +299,30 @@ nrow(house[is.na(house$Car)&is.na(house$Landsize),])
 
 df_car=as.data.frame(table(house$Car, useNA ='always'))
 colnames(df_car)=c('number of parking','count')
-df_car
-g_df_car=ggplot(df_car)
-g_df_car+geom_bar(aes(x=df_car$`number of parking`, y=df_car$count),
+ggplot(df_car)+geom_bar(aes(x=df_car$`number of parking`, y=df_car$count),
                       stat = "identity",
                       col='black',fill='grey')+
         labs(title="Histogram for the number of parking", x='number of parking',
              y='count')
 
+ggplot(house)+geom_histogram(aes(x=house$Car),
+                        col='black',fill='grey')+
+        coord_cartesian(xlim=c(0,10),)+
+        labs(x='number of parking',
+             y='count')
+
 
 #bathroom
 table(house$Bathroom,useNA ='always')
+
+ggplot(house)+geom_bar(aes(x=house$Bathroom), fill='grey',col='black')+
+        coord_cartesian(xlim=c(0,16),)+ 
+        scale_x_continuous(breaks=seq(0, 16, 1))+
+        labs(x='Number of bathroom')
+
+ggplot(house)+geom_point(aes(x=house$Rooms,y=house$Bathroom))
+
+cor.test(house$Rooms,house$Bathroom)
 
 #just impute from room
 nrow(house[is.na(house$Bathroom)&is.na(house$Bedroom2),])
@@ -312,9 +333,16 @@ nrow(house[is.na(house$Bathroom)&is.na(house$Bedroom2),])
 str(house)
 test=house[house$Type=='apartment' &! is.na(house$BuildingArea),]
 library(ggplot2)
-ggplot(house)+geom_histogram(aes(x=house$Landsize),binwidth = 20,
-                             fill='grey',col='black')+
-        coord_cartesian(xlim=c(0,600))
+plot1=ggplot(house)+geom_histogram(aes(x=house$Landsize),binwidth = 20,
+                                   fill='grey',col='black')+
+        coord_cartesian(xlim=c(0,900))+
+        labs(x='landsize')
+plot2=ggplot(house)+geom_histogram(aes(x=house$BuildingArea),binwidth = 20,
+                                   fill='grey',col='black')+
+        coord_cartesian(xlim=c(0,700))+
+        labs(x='building area')
+
+grid.arrange(plot1, plot2, ncol=2)
 
 test=house[house$Landsize>600,]
 test=test[order(-test$Landsize),]
@@ -326,31 +354,42 @@ table(house$YearBuilt,useNA ='always')
 
 df_year=as.data.frame(table(house$YearBuilt, useNA ='always'))
 colnames(df_year)=c('year','count')
-df_year
-
-as.numeric(as.character(df_year$year))
-
 df_year$year=as.numeric(as.character(df_year$year))
-df_year$year
-
-test=c(1,2,3,4,5,6,7,8,9,10)
-cut(test,c(0,3,7,10))
-?cut
 df_year$year50 <- cut(df_year$year, c(0, 1899,1949,1979,1999,2050),
                       include.lowest = T,
                       right = TRUE)
-df_year
 levels(df_year$year50) <- c("<1900", "1900~1949", "1950~1979", "1980~1999",'2000~2010')
 ggplot(df_year)+geom_bar(aes(x=df_year$year50, y=df_year$count),
                          stat = "identity",
-                         fill='grey')+
+                         fill='black', width = 0.5)+
         labs(title="Histogram for year built", x='year',
-             y='count')
+             y='count')+
+        coord_flip()
 
 
+#Suburb, Regionname, CouncilArea, Postcode
+
+Suburb=nrow(table(house$Suburb))
+RegionName=nrow(table(house$Regionname))
+CouncilArea=nrow(table(house$CouncilArea))
+PostalCode=nrow(table(house$Postcode))
+Division=data.frame(a=c('Suburb',"RegionName",'CouncilArea','PostalCode'),
+                    b=c(Suburb,RegionName,CouncilArea,PostalCode))
+ggplot(Division)+geom_bar(aes(x=reorder(a, b),y=b),
+                         stat = "identity", fill='grey',col='black')+
+        coord_flip()+
+        labs(y='Number of Cateories',x='')
 
 
+#distance
+table(house$Regionname)
 
+house=read.csv('data/Melbourne_housing_FULL.csv')
+house$Distance=as.character(house$Distance)
+house$Distance=as.numeric(house$Distance)
+ggplot(house)+geom_histogram(aes(x=house$Distance), 
+                             fill='grey',col='black',binwidth = 2)+
+        labs(x='Distance to CBD')
 
 
 
