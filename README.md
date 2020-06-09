@@ -3,7 +3,9 @@
 
 # Melbourne House Sales Price Predictive Analysis
 
-#### Original data and code can be found at <https://github.com/ludejia/CapstoneProject> Analyis and code are in the R mark down file ‘Analysis\_Code.RMD’
+#### For best display, please visit project github page <https://github.com/ludejia/CapstoneProject>
+
+#### Analysis and code are in the R mark down file ‘Analysis\_Code.RMD’
 
 #### Dejia Lu
 
@@ -84,15 +86,15 @@ values.
 
 #### Lattitude & Longtitude
 
-Lattitude & Longtitude are the GPS location data. 23% of the data are
-missing. Below we can visualize the location of the properties on google
-map and see which area has the high density of the property.
+“Lattitude” & “Longtitude” are the GPS location data. 23% of the data
+are missing. Below we can visualize the location of the properties on
+google map and see which area has the high density of the property.
 ![](Analysis_Code_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
 #### BuildingArea & Landsize
 
-Landsize is the size of the land the property occupies. Building area is
-the floor square meters of the house, town house or unit. For unit or
+“Landsize” is the size of the land the property occupies. “BuildingArea”
+is the floor square meters of the house, town house or unit. For unit or
 townhouse, landsize could be very big but the building area might be
 small as the land are shared by many units or townhouses.
 
@@ -100,38 +102,45 @@ small as the land are shared by many units or townhouses.
 
 #### Price & PricePerSquareMeters
 
-Price is the sold price in Australian dollar for the property. Instead
-of using total price as the predictor, I choose price per square meter
-as it’s also the common measure of property value and easier to
-understand its interaction with the features. Accordingly we will remove
-the data points having missing value in price and building area, and
-remove the outliers based on box plot. After this cleaning. Total number
-of observations reduces to
-10395.
+“Price” is the sold price in Australian dollar for the property. Instead
+of using total price as the predictor, I created a feature
+“PricePerSquareMeters” to represent price per square meter as it’s
+also the common measure of property value and easier to understand its
+interaction with the features. Accordingly we will remove the data
+points having missing value in price and building area, and remove the
+outliers based on box plot. After the cleaning, total number of
+observations reduces to 10395. Below shows the missing value after
+cleaning and price per square meter
+distribution.
 
 ![](Analysis_Code_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->![](Analysis_Code_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->
 
 #### Suburb, Postcode, Regionname, CouncilArea
 
-Suburb, Postcode, Regionname, CouncilArea divide Melbourne into
+“Suburb”, “Postcode”, “Regionname”, “CouncilArea” divide Melbourne into
 different sections. Below we can find Suburb has the finest divisions
 (351) whereas regionname only has 9 divisions.
+
 ![](Analysis_Code_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
-This map show the boundaries of Suburb, Postal Code, Council and Region.
-![](./map/map.png) Below is the price per square feet distribution for
-different region. Quite obvious, southern metropolitan is more
-expensive. The red the points on the map are these properties in
-Southern
+This map shows the boundaries of Suburb, Postal Code, Council and
+Region.
+
+![](./map/map.png)
+
+Below is the price per square meter distribution for different regions.
+Quite obvious, southern metropolitan is more expensive. The red the
+points on the map are these properties in Southern
 Metropolitan.
 
 ![](Analysis_Code_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->![](Analysis_Code_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->
 
 #### Propertycount
 
-Propertycount is number of properties that exist in the suburb where the
-property is located. We can see most popertys are in a suburb which has
-less than 50 properties.
+“Propertycount” is number of properties that exist in the suburb where
+the property is located. We can see most properties are in a suburb
+which has less than 50 properties in its suburb.
+
 ![](Analysis_Code_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 #### address
@@ -144,8 +153,11 @@ geographical features.
 
 There are three types of houses.
 
-House reprents house,cottage,villa, semi,terrace. Unit reprents
-apartment, condo, duplex. Townhouse repsents townhouse only.
+“House” reprents house,cottage,villa, semi,terrace.
+
+“Unit” reprents apartment, condo, duplex.
+
+“Townhouse” repsents townhouse only.
 
 Below we could see the total number of each type and the average price
 per square meter
@@ -155,17 +167,17 @@ distribution.
 
 #### Rooms, bedroom2
 
-Room and bedroom2 are very similar, which is the number of bedrooms in
-the property. Bedroom has no missing value and Bedroom2 has 23% percent
-missing value and is scraped by the contributor from different sources.
-Bedroom2 would be discarded in the model.
+“Rooms” and “bedroom2” are very similar, which is the number of bedrooms
+in the property. “Rooms” has no missing value and “bedroom2” has 23%
+percent missing value and is scraped by the contributor from different
+sources. “bedroom2” would be discarded in the model.
 
 ![](Analysis_Code_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 #### bathroom
 
-bathroom is the number of bathroom. 24% of the data is missing. Below we
-can find Bathroom and rooms are correlated.
+“bathroom” is the number of bathroom. 24% of the data is missing. Below
+we can find “bathroom” and “rooms” are correlated.
 
 ![](Analysis_Code_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
@@ -185,37 +197,54 @@ sample estimates:
 
 #### car
 
-Number of parking spot each property has. The bar chart shows the
-distribution.
+“car” is the number of parking spots each property has. The bar chart
+shows the distribution.
 
 ![](Analysis_Code_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 #### Distance
 
-Distance to CBD in Kilometers. Then
+“Distance” is the distance in km from the property to the center
+business district.
+
 ![](Analysis_Code_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 #### yearbuilt
 
-The year the property is built.
+The year the property is built. I group years to diffent categories to
+visualize the data. The categories are “\<1900”, “1900~1949”,
+“1950~1979”, “1980~1999”,‘2000~2010’. ‘yearbuilt’ has some missing
+values.
 
 ![](Analysis_Code_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 #### date
 
-Date the property was sold.The plot shows the average
+“date” is the date the property was sold. The plot shows the average
+price per squar meter per month.
+
 ![](Analysis_Code_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
 #### method
 
-Method reflects how the house was sold. Below is meaning of different
-method and the distribution chart. PI - property passed in; S - sold not
-disclosed; SA - sold after auction; SP - property sold prior;  
+“method” reflects how the house was sold. Below are the meanings of
+different method and the distribution chart.
+
+PI - property passed in;
+
+S - sold not disclosed;
+
+SA - sold after auction;
+
+SP - property sold prior;
+
 VB - vendor bid
 
 ![](Analysis_Code_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
 ## Approach
+
+![](./map/approach.png)
 
 #### Step 1: Exploratory Data Analysis
 

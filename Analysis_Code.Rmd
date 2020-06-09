@@ -6,12 +6,14 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo=FALSE,comment=NA,message=FALSE,warning = FALSE)
+knitr::opts_chunk$set(echo=FALSE, comment=NA, message=FALSE,warning = FALSE)
 ```
 
 # CKME 136 Capstone Project 
 # Melbourne House Sales Price Predictive Analysis
-#### Original data and code can be found at https://github.com/ludejia/CapstoneProject  Analyis and code are in the R mark down file 'Analysis_Code.RMD'
+#### For best display, please visit project github page https://github.com/ludejia/CapstoneProject
+#### Analysis and code are in the R mark down file ‘Analysis_Code.RMD’
+
 #### Dejia Lu
 #### Ryerson University 501005537
 
@@ -53,7 +55,7 @@ missing=missing[order(missing$missing),]
 ggplot(missing)+geom_bar(aes(x=reorder(var, missing),y=missing),
                          stat = "identity", fill='grey',color='black')+
         coord_flip()+
-        labs(y='Missing Value Percentage',x='')
+        labs(title='attributes and their missing value percentage', y='Missing Value Percentage',x='')
 vis_miss(house)
 ```
 
@@ -62,7 +64,7 @@ vis_miss(house)
 
 #### Lattitude & Longtitude 
 
-Lattitude & Longtitude are the GPS location data. 23% of the data are missing. Below we can visualize the location of the properties on google map and see which area has the high density of the property.
+"Lattitude" & "Longtitude" are the GPS location data. 23% of the data are missing. Below we can visualize the location of the properties on google map and see which area has the high density of the property.
 ```{r}
 register_google(key = "AIzaSyCyjfy52N-yvo76okcOhh4sc1wSqSMi8oI", write = TRUE)
 map=get_map(location='Melbourne',zoom = 10,maptype = "terrain",color = "bw",)
@@ -73,7 +75,7 @@ ggmap(map)+geom_point(data = house, aes(x = house$Longtitude, y = house$Lattitud
 
 #### BuildingArea & Landsize
 
-Landsize is the size of the land the property occupies. Building area is the floor square meters of the house, town house or unit. For unit or townhouse, landsize could be very big but the building area might be small as the land are shared by many units or townhouses. 
+"Landsize" is the size of the land the property occupies. "BuildingArea" is the floor square meters of the house, town house or unit. For unit or townhouse, landsize could be very big but the building area might be small as the land are shared by many units or townhouses. 
 
 ```{r}
 plot1=ggplot(house)+geom_histogram(aes(x=house$Landsize),binwidth = 20,
@@ -91,7 +93,7 @@ grid.arrange(plot1, plot2, ncol=2)
 
 #### Price & PricePerSquareMeters
 
-Price is the sold price in Australian dollar for the property. Instead of using total price as the predictor, I choose price per square meter as it's also the common measure of property value and easier to understand its interaction with the features. Accordingly we will remove the data points having missing value in price and building area, and remove the outliers based on box plot. After this cleaning. Total number of observations reduces to 10395.
+"Price" is the sold price in Australian dollar for the property. Instead of using total price as the predictor, I created a feature "PricePerSquareMeters" to represent price per square meter as it's also the common measure of property value and easier to understand its interaction with the features. Accordingly we will remove the data points having missing value in price and building area, and remove the outliers based on box plot. After the cleaning, total number of observations reduces to 10395. Below shows the missing value after cleaning and price per square meter distribution.
 
 
 ```{r}
@@ -114,7 +116,8 @@ ggplot(house)+geom_histogram(aes(x=house$PriceSQM),
 
 #### Suburb, Postcode, Regionname, CouncilArea
 
-Suburb, Postcode, Regionname, CouncilArea divide Melbourne into different sections. Below we can find Suburb has the finest divisions (351) whereas regionname only has 9 divisions.
+"Suburb", "Postcode", "Regionname", "CouncilArea" divide Melbourne into different sections. Below we can find Suburb has the finest divisions (351) whereas regionname only has 9 divisions.
+
 ```{r}
 Suburb=nrow(table(house$Suburb))
 RegionName=nrow(table(house$Regionname))
@@ -130,9 +133,11 @@ ggplot(Division)+geom_bar(aes(x=reorder(a, b),y=b),
 
 ```
 
-This map show the boundaries of Suburb, Postal Code, Council and Region.
+This map shows the boundaries of Suburb, Postal Code, Council and Region.
+
 ![](./map/map.png)
-Below is the price per square feet distribution for different region. Quite obvious, southern metropolitan is more expensive. The red the points on the map are these properties in Southern Metropolitan.
+
+Below is the price per square meter distribution for different regions. Quite obvious, southern metropolitan is more expensive. The red the points on the map are these properties in Southern Metropolitan.
 
 ```{r}
 ggplot(house)+geom_density(aes(PriceSQM,fill=house$Regionname),alpha=0.4)+
@@ -146,7 +151,8 @@ ggmap(map)+geom_point(data = southern, aes(x = Longtitude, y = Lattitude),
 
 #### Propertycount
 
-Propertycount is number of properties that exist in the suburb where the property is located. We can see most popertys are in a suburb which has less than 50 properties.
+"Propertycount" is number of properties that exist in the suburb where the property is located. We can see most properties are in a suburb which has less than 50 properties in its suburb.
+
 ```{r}
 df_pcount=data.frame(table(house$Propertycount,useNA = 'always'))
 ggplot(df_pcount)+geom_histogram(aes(x=df_pcount$Freq),binwidth = 30, 
@@ -162,9 +168,11 @@ Each property has its own address. It would not be included in the model as we a
 
 There are three types of houses.
 
-House reprents house,cottage,villa, semi,terrace.
-Unit reprents apartment, condo, duplex.
-Townhouse repsents townhouse only.
+"House" reprents house,cottage,villa, semi,terrace.
+
+"Unit" reprents apartment, condo, duplex.
+
+"Townhouse" repsents townhouse only.
 
 Below we could see the total number of each type and the average price per square meter distribution.
 
@@ -184,7 +192,7 @@ ggplot(house)+geom_density(aes(house$PriceSQM,fill=house$Type),alpha=0.4)+
 
 #### Rooms, bedroom2
 
-Room and bedroom2 are very similar, which is the number of bedrooms in the property. Bedroom has no missing value and Bedroom2 has 23% percent missing value and is scraped by the contributor from different sources. Bedroom2 would be discarded in the model.
+"Rooms" and "bedroom2" are very similar, which is the number of bedrooms in the property. "Rooms" has no missing value and "bedroom2" has 23% percent missing value and is scraped by the contributor from different sources. "bedroom2" would be discarded in the model.
 
 ```{r}
 ggplot(house)+geom_bar(aes(x=house$Rooms), fill='grey',col='black')+
@@ -195,7 +203,7 @@ ggplot(house)+geom_bar(aes(x=house$Rooms), fill='grey',col='black')+
 
 #### bathroom
 
-bathroom is the number of bathroom. 24% of the data is missing. Below we can find Bathroom and rooms are correlated.
+"bathroom" is the number of bathroom. 24% of the data is missing. Below we can find "bathroom" and "rooms" are correlated.
 
 ```{r}
 pb1=ggplot(house)+geom_bar(aes(x=house$Bathroom), fill='grey',col='black')+
@@ -212,7 +220,7 @@ print(cor.test(house$Rooms,house$Bathroom))
 
 #### car
 
-Number of parking spot each property has. The bar chart shows the distribution.
+"car" is the number of parking spots each property has. The bar chart shows the distribution.
 
 ```{r}
 
@@ -227,7 +235,8 @@ ggplot(house)+geom_histogram(aes(x=house$Car),
 
 #### Distance
 
-Distance to CBD in Kilometers. Then
+"Distance" is the distance in km from the property to the center business district.
+
 ```{r}
 house$Distance=as.character(house$Distance)
 house$Distance=as.numeric(house$Distance)
@@ -238,7 +247,7 @@ ggplot(house)+geom_histogram(aes(x=house$Distance),
 
 #### yearbuilt
 
-The year the property is built. 
+The year the property is built. I group years to diffent categories to visualize the data. The categories are "<1900", "1900~1949", "1950~1979", "1980~1999",'2000~2010'. 'yearbuilt' has some missing values.
 
 ```{r}
 df_year=as.data.frame(table(house$YearBuilt, useNA ='always'))
@@ -258,7 +267,8 @@ ggplot(df_year)+geom_bar(aes(x=df_year$year50, y=df_year$count),
 
 #### date
 
-Date the property was sold.The plot shows the average 
+"date" is the date the property was sold. The plot shows the average price per squar meter per month.
+
 ```{r}
 library(lubridate)
 df_num=data.frame(table(house$Date))
@@ -293,11 +303,16 @@ grid.arrange(pd1, pd2, ncol=2)
 
 #### method
 
-Method reflects how the house was sold. Below is meaning of different method and the distribution chart.
+"method" reflects how the house was sold. Below are the meanings of different method and the distribution chart.
+
 PI - property passed in; 
+
 S - sold not disclosed; 
+
 SA - sold after auction; 
-SP - property sold prior;  
+
+SP - property sold prior; 
+
 VB - vendor bid
 
 ```{r}
@@ -311,6 +326,8 @@ ggplot(house)+geom_bar(aes(x=house$Method), fill='grey', col='black',
 
 
 ## Approach
+
+![](./map/approach.png)
 
 #### Step 1: Exploratory Data Analysis
 
