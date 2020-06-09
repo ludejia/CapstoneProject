@@ -198,19 +198,35 @@ ggplot(house)+geom_bar(aes(x=house$Type),fill='grey',width = 0.3,col='black')+
 
 #house$Price
 
-summary(house$Price)
-g=ggplot(house)
-g+geom_histogram(aes(x=house$Price),
-                 binwidth = 20000, fill='blue')+
+
+boxplot.stats(house$PriceSQM)
+house=house[house$PriceSQM<14610 & house$PriceSQM>30,]
+boxplot(house$PriceSQM)
+
+ggplot(house)+geom_histogram(aes(x=house$PriceSQM),
+                 binwidth = 600, fill='grey', col='black')+
         labs(title="histogram for house price", x='price')+
-        coord_cartesian(xlim=c(0,4000000),)
-
-g+geom_histogram(aes(x=house$Price, fill=house$Type),
-                 binwidth = 20000)+
-        labs(title="histogram for house price", x='price')+
-        coord_cartesian(xlim=c(0,4000000),)
+        coord_cartesian(xlim=c(0,15000),)
 
 
+ggplot(house)+geom_density(aes(PriceSQM,fill=house$Regionname),alpha=0.4)+
+        labs(x='price per square meter')
+
+test=house[house$PriceSQM<20000 &house$PriceSQM>0,]
+plot(density(test$PriceSQM))
+
+southern=house[house$Regionname=='Southern Metropolitan',]
+
+ggplot(mpg)+ geom_density(aes(x=cty,fill=factor(cyl)), alpha=0.8) + 
+        labs(title="Density plot", 
+             subtitle="City Mileage Grouped by Number of cylinders",
+             caption="Source: mpg",
+             x="City Mileage",
+             fill="# Cylinders")
+
+southern=house[house$Regionname=='Southern Metropolitan',]
+ggmap(map)+geom_point(data = southern, aes(x = Longtitude, y = Lattitude), 
+                      color ='red', size = 0.05,alpha=0.15)
 
 #house$Method        
 table(house$Method, useNA ='always')
@@ -392,12 +408,46 @@ ggplot(house)+geom_histogram(aes(x=house$Distance),
         labs(x='Distance to CBD')
 
 
+#Propertycount
+
+table(house$Propertycount,useNA = 'always')
+df_pcount=data.frame(table(house$Propertycount,useNA = 'always'))
+ggplot(df_pcount)+geom_histogram(aes(x=df_pcount$Freq),binwidth = 30, 
+                                 fill='grey', col='black')+
+        labs(x='number of properties in its suburb')
 
 
 
+ggplot(house)+geom_density(aes(house$PriceSQM,fill=house$Type),alpha=0.4)+
+        labs(x='price per square meter')
 
 
+df_num=data.frame(table(house$Date))
+colnames(df_num)=c('Date','count')
+df_num$Date=dmy(df_num$Date)
+df_num$Date=floor_date(df_num$Date, unit = "month")
+df_num=aggregate(df_num$count~df_num$Date,df_num,sum)
+df_num=df_num[c(-1,-2),]
+ggplot(df_num)+geom_line(aes(x=df_num$`df_num$Date`,y=df_num$`df_num$count`),
+                                   color="grey")+
+        geom_point(aes(x=df_num$`df_num$Date`,y=df_num$`df_num$count`),
+                                                          color="black")+
+        labs(x='date', y='number of properties sold ')
 
+
+df_avghouseprice=aggregate(house$PriceSQM~house$Date,house,mean)
+colnames(df_avghouseprice)=c('Date','average sold price')
+df_avghouseprice$Date=dmy(df_avghouseprice$Date)
+df_avghouseprice$Date=floor_date(df_avghouseprice$Date, unit = "month")
+df_avghouseprice=aggregate(df_avghouseprice$`average sold price`~df_avghouseprice$Date,
+                           df_avghouseprice,mean)
+df_avghouseprice=df_avghouseprice[-1,]
+colnames(df_avghouseprice)=c('Date','average sold price')
+ggplot(df_avghouseprice)+geom_line(aes(x=df_avghouseprice$Date,y=df_avghouseprice$`average sold price`),
+                                   color="grey")+
+        geom_point(aes(x=df_avghouseprice$Date,y=df_avghouseprice$`average sold price`),
+                  color="black")+
+        labs(x='date', y='average sold price per square meter')
 
 
 
