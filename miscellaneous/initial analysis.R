@@ -449,17 +449,134 @@ ggplot(df_avghouseprice)+geom_line(aes(x=df_avghouseprice$Date,y=df_avghousepric
                   color="black")+
         labs(x='date', y='average sold price per square meter')
 
+## Outlier & Missing value imputation
+
+
+#remove the outliers based on boxplot of priceSQM
+
+# becuase the cost of build a house remov
+
+test=house[!(house$BuildingArea<40 & house$Type=='h'),]
+
+
+test2=test[-(test$BuildingArea<40 & test$Type=='h'),]
+
+!(test$BuildingArea<40 & test$Type=='h')
+
+library(ggplot2)
+
+ggplot(house)+geom_point(aes(x=house$BuildingArea,y=house$Price))+
+        coord_cartesian(xlim=c(0,2000),)
+
+
+test=table(house$Rooms,useNA ='always')
+
+test=house[house$BuildingArea>500,]
+test=house[house$Landsize==0]
+
+test=house[house$Landsize>2000,]
+test=house[house$Landsize<house$BuildingArea& ! is.na(house$Landsize),]
+summary(test$Landsize)
+house[house$Landsize<house$BuildingArea& ! is.na(house$Landsize),]$Landsize=NA
+house[house$Landsize==0,]
+summary(house$Landsize)
+
+house[is.na(house$Landsize) & house$Type=='u',]$Landsize=median(house[house$Type=='u',]$Landsize,na.rm = T)
+house[is.na(house$Landsize) & house$Type=='h',]$Landsize=median(house[house$Type=='h',]$Landsize,na.rm = T)
+house[is.na(house$Landsize) & house$Type=='t',]$Landsize=median(house[house$Type=='t',]$Landsize,na.rm = T)
+
+test=mtcars        
+test$am=NA
+test[test$gear==5,]$gear=NA
+
+test[test$gear==5,]$gear=NA
+test=0
+test
+
+summary(house$Landsize)
+
+median(house[house$Type=='h',]$Landsize,na.rm = T)
+median(house[house$Type=='u',]$Landsize,na.rm = T)
+median(house[house$Type=='t',]$Landsize,na.rm = T)
+
+
+boxplot.stats(house$Landsize)
+
+boxplot.stats(house$BuildingArea)
 
 
 
 
+ggplot(house)+geom_histogram(aes(x=house$Landsize),binwidth = 20,
+                             fill='grey',col='black')
+
+
+## Feature selection and engineering
+
+#remove GPS
+
+colnames(house)
+
+colnames(house)[c(1,2,10)]
+
+house=house[,c(-8)]
+
+vis_miss(house)
+
+table(house$Car,useNA ='always')
 
 
 
+house[is.na(house$Car),]=median(house$Car,na.rm=T)
+factor(house$Car)
+str(house$Car)
+
+str(house$YearBuilt)
+median(house$YearBuilt,na.rm=T)
+house[is.na(house$YearBuilt),]$YearBuilt=median(house$YearBuilt,na.rm=T)
+
+house[is.na(house$YearBuilt),]$YearBuilt
+house[house$Regionname=="#N/A",]
+
+table(house$Regionname)
+
+str(house)
+
+summary(house$YearBuilt)
+
+house[house$YearBuilt<1800,]$YearBuilt=1970
+
+boxplot.stats(house$YearBuilt)
+
+house$Date=dmy(house$Date)
+house$Date=floor_date(house$Date, unit = "month")
+house=house[!(house$Date=='2016-02-01'),]
+house$AVGprice=df_avghouseprice[match(house$Date,df_avghouseprice$Date),2]
+
+str(house)
+table(house$Date,useNA ='always')
+
+house=house[,-which(names(house)=='Price')]
 
 
+house=house[,-which(names(house)=='Suburb')]
+house=house[,-which(names(house)=='Address')]
+house=house[,-which(names(house)=='Postcode')]
+house=house[,-which(names(house)=='Bedroom2')]
+house=house[,-which(names(house)=='Landsize')]
+house=house[,-which(names(house)=='Lattitude')]
+house=house[,-which(names(house)=='Longtitude')]
 
+str(house)
+summary(house)
 
+house$Method=as.character(house$Method)
+house$Method=as.factor(house$Method)
 
+house$CouncilArea=as.character(house$CouncilArea)
+house$CouncilArea=as.factor(house$CouncilArea)
+
+house$Regionname=as.character(house$Regionname)
+house$Regionname=as.factor(house$Regionname)
 
 
