@@ -77,7 +77,7 @@ ggmap(map)+geom_point(data = house, aes(x = house$Longtitude, y = house$Lattitud
 ```
 #### Price & PricePerSquareMeters
 
-"Price" is the sold price in Australian dollar for the property. Instead of using total price as the predictor, I created a feature "PricePerSquareMeters" to represent price per square meter as it's also the common measure of property value and easier to understand its interaction with the features. Accordingly we remove the data points having missing value in price and building area, and remove the outliers based on box plot. After the cleaning, total number of observations reduces to 10395. Below shows the missing value after cleaning and price per square meter distribution. 
+"Price" is the sold price in Australian dollar for the property. I replace the unit of price to million Australian dollars. I created a feature "PriceSQM" to represent price per square meter as it's also the common measure of property value and easier to understand its interaction with the features. I remove the data points having missing value in price and building area, and remove the outliers on PriceSQM using boxplot. After the cleaning, total number of observations reduces to 10395. Below shows the missing value after cleaning and price per square meter distribution. 
 
 I removed the outliers by discarding the data with price per square meter less than 2000 and over 15000 based on reasonable price range in Melbourne.
 
@@ -91,14 +91,13 @@ house=house[!is.na(house$BuildingArea),]
 house=house[house$BuildingArea!=0,]
 house$PriceSQM=house$Price/house$BuildingArea
 house=house[house$PriceSQM<15000 & house$PriceSQM>2000,]
+house$Price=house$Price/1000000
 
 
 vis_miss(house)
-ggplot(house)+geom_histogram(aes(x=house$PriceSQM),
-                 binwidth = 600, fill='grey', col='black')+
-        labs(x='price per square meter')+
-        coord_cartesian(xlim=c(0,15000),)
-
+ggplot(house)+geom_histogram(aes(x=house$Price),
+                 binwidth = 0.1, fill='grey', col='black')+
+        labs(x='House sold price (million)')
 ```
 
 
@@ -135,10 +134,6 @@ plot2=ggplot(house)+geom_histogram(aes(x=house$BuildingArea),binwidth = 20,
         labs(x='building area')
 
 grid.arrange(plot1, plot2, ncol=2)
-
-
-
-
 
 ```
 
@@ -212,7 +207,7 @@ There are three types of houses.
 
 "Townhouse" repsents townhouse only.
 
-Below we could see the total number of each type and the average price per square meter distribution.
+Below we could see the total number of each type and sold price distribution.
 
 ```{r}
 house$Type=as.character(house$Type)
@@ -222,8 +217,8 @@ house[house$Type=='t',]$Type='townhouse'
 house$Type=as.factor(house$Type)
 ggplot(house)+geom_bar(aes(x=house$Type),fill='grey',width = 0.3,col='black')+
         labs(x='house type')
-ggplot(house)+geom_density(aes(house$PriceSQM,fill=house$Type),alpha=0.4)+
-        labs(x='price per square meter')
+ggplot(house)+geom_density(aes(house$Price,fill=house$Type),alpha=0.4)+
+        labs(x='price')
 
 ```
 
@@ -342,7 +337,7 @@ pd2= ggplot(df_avghouseprice)+geom_line(aes(x=df_avghouseprice$Date,y=df_avghous
                                    color="grey")+
         geom_point(aes(x=df_avghouseprice$Date,y=df_avghouseprice$`average sold price`),
                   color="black")+
-        labs(title='average sold price per month',x='date', y='average sold price per square meter')
+        labs(title='Average sold price per square meter',x='date', y='average sold price per square meter')
 grid.arrange(pd1, pd2, ncol=2)
 
 house$Date=dmy(house$Date)
@@ -383,7 +378,6 @@ SellerG is Seller informaion and will not be included.
 #remove the variables that I don't use
 house=house[,-which(names(house)=='Date')]
 house=house[,-which(names(house)=='SellerG')]
-house=house[,-which(names(house)=='Price')]
 house=house[,-which(names(house)=='Suburb')]
 house=house[,-which(names(house)=='Address')]
 house=house[,-which(names(house)=='Postcode')]
@@ -391,6 +385,9 @@ house=house[,-which(names(house)=='Bedroom2')]
 house=house[,-which(names(house)=='Landsize')]
 house=house[,-which(names(house)=='Lattitude')]
 house=house[,-which(names(house)=='Longtitude')]
+house=house[,-which(names(house)=='PriceSQM')]
+
+
 #clean unused factor
 house$Method=as.character(house$Method)
 house$Method=as.factor(house$Method)
@@ -419,7 +416,77 @@ Build models using various algorithms; Fine tuning parameters to achieve best pe
 
 Perform cross-validation to compare performance across different models and decide on the final model.
 
+### Modelling
 
+Below is the correlation graph of all the numeric variables and we can find that number of rooms are hight correlated with number of bathroom. Price per square meter is highly correlated with YearBuilt and Distance from CBD.
+
+
+
+```{r}
+library(ggcorrplot)
+house_numeric=house
+house_numeric=house_numeric[,-which(names(house_numeric)=='Type')]
+house_numeric=house_numeric[,-which(names(house_numeric)=='Method')]
+house_numeric=house_numeric[,-which(names(house_numeric)=='CouncilArea')]
+house_numeric=house_numeric[,-which(names(house_numeric)=='Regionname')]
+
+
+corr <- cor(house_numeric)
+ggcorrplot(corr, hc.order = TRUE, 
+           type = "lower", 
+           lab = TRUE, 
+           lab_size = 3, 
+           method="circle", 
+           colors = c("tomato2", "white", "springgreen3"), 
+           title="Correlation of numeric variables", 
+           ggtheme=theme_bw)
+
+
+```
+
+
+
+
+### linear model
+Below we implemented forward, backward, forward stepwise and backward stepwise feature selection, which all select the same feature including Rooms, Type, Method, Distance, Bathroom, Car, YearBuilt, CouncilArea, Regionname, BuildingAreaRatio, AVGprice. Propertycount would be excluded in the model.
+
+
+```{r, eval=F, echo=T}
+library(MASS)
+null=lm(Price~1,data=house)
+full=lm(Price~.,data=house)
+stepAIC(null, scope=list(lower=null, upper=full), direction= "forward", trace=TRUE)
+stepAIC(full, direction= "backward", trace=TRUE)
+stepAIC(null, scope=list(lower=null, upper=full), direction= "both", trace=TRUE)
+stepAIC(full, direction= "both", trace=TRUE)
+
+```
+
+Plot the the prediction, residual of this model
+```{r}
+model_linear=lm(formula = Price ~ Rooms + Type + Method + Distance + Bathroom + 
+    Car + BuildingArea + YearBuilt + CouncilArea + Regionname + 
+    BuildingAreaRatio + AVGprice, data = house)
+summary(model_linear)
+residual=data.frame(residual=model_linear$residuals, prediction=model_linear$fitted.values)
+pred=data.frame(price=model_linear$model$Price, prediction=model_linear$fitted.values)
+
+ggplot(residual)+geom_histogram(aes(x=residual),
+                             binwidth = 0.1, fill='grey', col='black')+
+        coord_cartesian(xlim=c(-1.5,1.5))+
+        scale_x_continuous(breaks=seq(-1.5,1.5,0.5))+
+        labs(title = 'histogram of residuals (unit: million dollars)')
+
+ggplot(pred)+geom_point(aes(y=prediction,x=price), color='blue', alpha=0.10)+
+        coord_cartesian(xlim=c(0,3), ylim=c(0,3))+
+        labs(title='price vs predection (unit: million)', x='price (million)')
+
+ggplot(residual)+geom_point(aes(x=prediction,y=residual), color='purple', alpha=0.10)+
+        labs(title='prediction vs residual (unit: million)',
+             x='prediction ', y='residual')+
+        coord_cartesian(xlim=c(0,2), ylim=c(-2,2))
+
+```
 
 
 

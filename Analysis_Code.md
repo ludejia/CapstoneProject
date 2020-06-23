@@ -93,15 +93,15 @@ google map and see which area has the high density of the property.
 ![](Analysis_Code_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 \#\#\#\# Price & PricePerSquareMeters
 
-“Price” is the sold price in Australian dollar for the property. Instead
-of using total price as the predictor, I created a feature
-“PricePerSquareMeters” to represent price per square meter as it’s
-also the common measure of property value and easier to understand its
-interaction with the features. Accordingly we remove the data points
-having missing value in price and building area, and remove the outliers
-based on box plot. After the cleaning, total number of observations
-reduces to 10395. Below shows the missing value after cleaning and price
-per square meter distribution.
+“Price” is the sold price in Australian dollar for the property. I
+replace the unit of price to million Australian dollars. I created a
+feature “PriceSQM” to represent price per square meter as it’s also the
+common measure of property value and easier to understand its
+interaction with the features. I remove the data points having missing
+value in price and building area, and remove the outliers on PriceSQM
+using boxplot. After the cleaning, total number of observations reduces
+to 10395. Below shows the missing value after cleaning and price per
+square meter distribution.
 
 I removed the outliers by discarding the data with price per square
 meter less than 2000 and over 15000 based on reasonable price range in
@@ -180,8 +180,7 @@ There are three types of houses.
 
 “Townhouse” repsents townhouse only.
 
-Below we could see the total number of each type and the average price
-per square meter
+Below we could see the total number of each type and sold price
 distribution.
 
 ![](Analysis_Code_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->![](Analysis_Code_files/figure-gfm/unnamed-chunk-8-2.png)<!-- -->
@@ -283,6 +282,7 @@ SellerG is Seller informaion and will not be included.
     'data.frame':   10038 obs. of  14 variables:
      $ Rooms            : int  3 4 3 2 3 2 2 3 3 2 ...
      $ Type             : Factor w/ 3 levels "house","townhouse",..: 1 1 1 1 1 3 1 1 1 1 ...
+     $ Price            : num  1.47 1.6 1.88 1.1 1.35 ...
      $ Method           : Factor w/ 5 levels "PI","S","SA",..: 4 5 2 2 5 2 2 2 2 2 ...
      $ Distance         : num  2.5 2.5 2.5 2.5 2.5 2.5 2.5 2.5 2.5 2.5 ...
      $ Bathroom         : int  2 1 2 1 2 2 1 2 1 1 ...
@@ -292,7 +292,6 @@ SellerG is Seller informaion and will not be included.
      $ CouncilArea      : Factor w/ 33 levels "Banyule City Council",..: 32 32 32 32 32 32 32 32 32 32 ...
      $ Regionname       : Factor w/ 8 levels "Eastern Metropolitan",..: 3 3 3 3 3 3 3 3 3 3 ...
      $ Propertycount    : num  191 191 191 191 191 191 191 191 191 191 ...
-     $ PriceSQM         : num  9767 11268 8933 14627 7105 ...
      $ BuildingAreaRatio: num  0.263 0.249 0.857 0.341 0.888 ...
      $ AVGprice         : num  7851 7533 7462 8016 8038 ...
     NULL
@@ -318,6 +317,167 @@ best performance for each algorithm; Adjust features if needed;
 
 Perform cross-validation to compare performance across different models
 and decide on the final model.
+
+### Modelling
+
+Below is the correlation graph of all the numeric variables and we can
+find that number of rooms are hight correlated with number of bathroom.
+Price per square meter is highly correlated with YearBuilt and Distance
+from CBD.
+
+![](Analysis_Code_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+
+### linear model
+
+Below we implemented forward, backward, forward stepwise and backward
+stepwise feature selection, which all select the same feature including
+Rooms, Type, Method, Distance, Bathroom, Car, YearBuilt, CouncilArea,
+Regionname, BuildingAreaRatio, AVGprice. Propertycount would be excluded
+in the model.
+
+``` r
+library(MASS)
+null=lm(Price~1,data=house)
+full=lm(Price~.,data=house)
+stepAIC(null, scope=list(lower=null, upper=full), direction= "forward", trace=TRUE)
+stepAIC(full, direction= "backward", trace=TRUE)
+stepAIC(null, scope=list(lower=null, upper=full), direction= "both", trace=TRUE)
+stepAIC(full, direction= "both", trace=TRUE)
+```
+
+Plot the the prediction, residual of this model
+
+``` 
+
+Call:
+lm(formula = Price ~ Rooms + Type + Method + Distance + Bathroom + 
+    Car + BuildingArea + YearBuilt + CouncilArea + Regionname + 
+    BuildingAreaRatio + AVGprice, data = house)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.1278 -0.1608 -0.0144  0.1350  3.4949 
+
+Coefficients:
+                                              Estimate   Std. Error
+(Intercept)                                6.040481025  0.223078257
+Rooms                                      0.058586413  0.005438812
+Typetownhouse                             -0.116468252  0.013600231
+Typeunit                                  -0.317379773  0.011301465
+MethodS                                    0.069033265  0.009767946
+MethodSA                                   0.017224242  0.039250454
+MethodSP                                   0.055926836  0.012118043
+MethodVB                                   0.014679670  0.013375537
+Distance                                  -0.032519498  0.001246961
+Bathroom                                   0.096063150  0.006363059
+Car                                        0.022099315  0.003678288
+BuildingArea                               0.003562500  0.000072075
+YearBuilt                                 -0.002725600  0.000113005
+CouncilAreaBayside City Council            0.629943472  0.030436126
+CouncilAreaBoroondara City Council         0.569836186  0.028031913
+CouncilAreaBrimbank City Council          -0.167151717  0.041069659
+CouncilAreaCardinia Shire Council          0.567896291  0.111805410
+CouncilAreaCasey City Council              0.273151170  0.058108156
+CouncilAreaDarebin City Council            0.145101021  0.024906397
+CouncilAreaFrankston City Council          0.510356608  0.053293312
+CouncilAreaGlen Eira City Council          0.322172319  0.028955374
+CouncilAreaGreater Dandenong City Council  0.199590652  0.052691592
+CouncilAreaHobsons Bay City Council        0.063086190  0.043631640
+CouncilAreaHume City Council              -0.019273880  0.027166859
+CouncilAreaKingston City Council           0.301917490  0.038261981
+CouncilAreaKnox City Council               0.007476027  0.033859672
+CouncilAreaMacedon Ranges Shire Council    0.357611106  0.104058755
+CouncilAreaManningham City Council         0.086849894  0.023739890
+CouncilAreaMaribyrnong City Council       -0.059446227  0.043176252
+CouncilAreaMaroondah City Council          0.110322310  0.032594366
+CouncilAreaMelbourne City Council          0.220553912  0.027105062
+CouncilAreaMelton City Council            -0.247857833  0.052622744
+CouncilAreaMitchell Shire Council          0.267983109  0.141725501
+CouncilAreaMonash City Council             0.254178068  0.026632847
+CouncilAreaMoonee Valley City Council      0.067693064  0.042451829
+CouncilAreaMoorabool Shire Council        -0.029462408  0.313257884
+CouncilAreaMoreland City Council           0.105132901  0.025396937
+CouncilAreaNillumbik Shire Council        -0.215157736  0.075669466
+CouncilAreaPort Phillip City Council       0.303937146  0.032036332
+CouncilAreaStonnington City Council        0.566804451  0.032470396
+CouncilAreaWhitehorse City Council         0.150282509  0.029825207
+CouncilAreaWhittlesea City Council         0.056609047  0.029444789
+CouncilAreaWyndham City Council           -0.210328832  0.043327431
+CouncilAreaYarra City Council              0.277919873  0.030055117
+CouncilAreaYarra Ranges Shire Council      0.251612641  0.088482372
+RegionnameEastern Victoria                -0.066349973  0.066490929
+RegionnameNorthern Metropolitan           -0.232192281  0.024267766
+RegionnameNorthern Victoria                0.215432261  0.069531856
+RegionnameSouth-Eastern Metropolitan      -0.087271025  0.035447062
+RegionnameSouthern Metropolitan           -0.117006377  0.025196700
+RegionnameWestern Metropolitan            -0.128513682  0.040443480
+RegionnameWestern Victoria                 0.261773215  0.072121118
+BuildingAreaRatio                         -0.160100219  0.019268954
+AVGprice                                  -0.000019245  0.000005343
+                                          t value             Pr(>|t|)    
+(Intercept)                                27.078 < 0.0000000000000002 ***
+Rooms                                      10.772 < 0.0000000000000002 ***
+Typetownhouse                              -8.564 < 0.0000000000000002 ***
+Typeunit                                  -28.083 < 0.0000000000000002 ***
+MethodS                                     7.067 0.000000000001685094 ***
+MethodSA                                    0.439             0.660795    
+MethodSP                                    4.615 0.000003976701831176 ***
+MethodVB                                    1.098             0.272449    
+Distance                                  -26.079 < 0.0000000000000002 ***
+Bathroom                                   15.097 < 0.0000000000000002 ***
+Car                                         6.008 0.000000001943339018 ***
+BuildingArea                               49.428 < 0.0000000000000002 ***
+YearBuilt                                 -24.119 < 0.0000000000000002 ***
+CouncilAreaBayside City Council            20.697 < 0.0000000000000002 ***
+CouncilAreaBoroondara City Council         20.328 < 0.0000000000000002 ***
+CouncilAreaBrimbank City Council           -4.070 0.000047384242348457 ***
+CouncilAreaCardinia Shire Council           5.079 0.000000385618146649 ***
+CouncilAreaCasey City Council               4.701 0.000002626934518906 ***
+CouncilAreaDarebin City Council             5.826 0.000000005857863144 ***
+CouncilAreaFrankston City Council           9.576 < 0.0000000000000002 ***
+CouncilAreaGlen Eira City Council          11.127 < 0.0000000000000002 ***
+CouncilAreaGreater Dandenong City Council   3.788             0.000153 ***
+CouncilAreaHobsons Bay City Council         1.446             0.148242    
+CouncilAreaHume City Council               -0.709             0.478054    
+CouncilAreaKingston City Council            7.891 0.000000000000003318 ***
+CouncilAreaKnox City Council                0.221             0.825257    
+CouncilAreaMacedon Ranges Shire Council     3.437             0.000591 ***
+CouncilAreaManningham City Council          3.658             0.000255 ***
+CouncilAreaMaribyrnong City Council        -1.377             0.168597    
+CouncilAreaMaroondah City Council           3.385             0.000715 ***
+CouncilAreaMelbourne City Council           8.137 0.000000000000000453 ***
+CouncilAreaMelton City Council             -4.710 0.000002509476407201 ***
+CouncilAreaMitchell Shire Council           1.891             0.058672 .  
+CouncilAreaMonash City Council              9.544 < 0.0000000000000002 ***
+CouncilAreaMoonee Valley City Council       1.595             0.110837    
+CouncilAreaMoorabool Shire Council         -0.094             0.925070    
+CouncilAreaMoreland City Council            4.140 0.000035078698242898 ***
+CouncilAreaNillumbik Shire Council         -2.843             0.004473 ** 
+CouncilAreaPort Phillip City Council        9.487 < 0.0000000000000002 ***
+CouncilAreaStonnington City Council        17.456 < 0.0000000000000002 ***
+CouncilAreaWhitehorse City Council          5.039 0.000000476727386530 ***
+CouncilAreaWhittlesea City Council          1.923             0.054565 .  
+CouncilAreaWyndham City Council            -4.854 0.000001225799299406 ***
+CouncilAreaYarra City Council               9.247 < 0.0000000000000002 ***
+CouncilAreaYarra Ranges Shire Council       2.844             0.004469 ** 
+RegionnameEastern Victoria                 -0.998             0.318362    
+RegionnameNorthern Metropolitan            -9.568 < 0.0000000000000002 ***
+RegionnameNorthern Victoria                 3.098             0.001952 ** 
+RegionnameSouth-Eastern Metropolitan       -2.462             0.013833 *  
+RegionnameSouthern Metropolitan            -4.644 0.000003465632334594 ***
+RegionnameWestern Metropolitan             -3.178             0.001489 ** 
+RegionnameWestern Victoria                  3.630             0.000285 ***
+BuildingAreaRatio                          -8.309 < 0.0000000000000002 ***
+AVGprice                                   -3.602             0.000318 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.306 on 9984 degrees of freedom
+Multiple R-squared:  0.7561,    Adjusted R-squared:  0.7548 
+F-statistic: 583.9 on 53 and 9984 DF,  p-value: < 0.00000000000000022
+```
+
+![](Analysis_Code_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->![](Analysis_Code_files/figure-gfm/unnamed-chunk-19-2.png)<!-- -->![](Analysis_Code_files/figure-gfm/unnamed-chunk-19-3.png)<!-- -->
 
 ## Reference
 
