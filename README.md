@@ -90,8 +90,9 @@ values.
 are missing. Below we can visualize the location of the properties on
 google map and see which area has the high density of the property.
 
-![](Code_files/figure-gfm/unnamed-chunk-2-1.png)<!-- --> \#\#\#\# Price
-& PricePerSquareMeters
+![](Code_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+
+#### Price & PricePerSquareMeters
 
 “Price” is the sold price in Australian dollar for the property. I
 replace the unit of price to million Australian dollars. I created a
