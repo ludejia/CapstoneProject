@@ -76,6 +76,7 @@ ggmap(map)+geom_point(data = house, aes(x = house$Longtitude, y = house$Lattitud
 
 
 ```
+
 #### Price & PricePerSquareMeters
 
 "Price" is the sold price in Australian dollar for the property. I replace the unit of price to million Australian dollars. I created a feature "PriceSQM" to represent price per square meter as it's also the common measure of property value and easier to understand its interaction with the features. I remove the data points having missing value in price and building area, and remove the outliers on PriceSQM using boxplot. After the cleaning, total number of observations reduces to 10395. Below shows the missing value after cleaning and price per square meter distribution. 
