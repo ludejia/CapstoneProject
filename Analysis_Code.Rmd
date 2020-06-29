@@ -500,7 +500,7 @@ house=house[,-which(names(house)=='Price')]
 
 ```
 
-Now I build the model again based using same feature selection methods like before which all produce the same result and achieve higher adjust R square. This time 'BuildingAreaRatio' is not selected by all the feature selection methods. I discard this feature in our dataset. Our final model for linear model is below. From the residual plot we can find that heteroscedasticity is not obvious.
+Now I build the model again based using same feature selection methods like before which all produce the same result and achieve higher adjust R square. This time 'BuildingAreaRatio' is not selected by all the feature selection methods. I discard this feature in our dataset. Our final model for linear model is below and adjusted R squared of 0.8206. From the residual plot we can find that heteroscedasticity is not obvious.
 
 ```{r}
 model_linear=lm(formula = log_Price ~ Rooms + Type + Method + Distance + Bathroom + 
