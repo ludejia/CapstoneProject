@@ -260,3 +260,55 @@ model_linear=lm(formula = Price ~ Rooms + Type + Method + Distance + Bathroom +
 testmodel=lm(Price~Regionname, data = house)
 summary(testmodel) 
 
+
+
+model_linear=lm(log(Price) ~ Rooms + Type + Method + Distance + Bathroom + 
+                        Car + BuildingArea + YearBuilt + CouncilArea + Regionname + 
+                        BuildingAreaRatio + AVGprice, data = house)
+summary(model_linear)
+residual=data.frame(residual=model_linear$residuals, prediction=model_linear$fitted.values)
+pred=data.frame(price=model_linear$model$log_Price, prediction=model_linear$fitted.values)
+
+ggplot(residual)+geom_histogram(aes(x=residual),
+                                binwidth = 0.1, fill='grey', col='black')+
+        coord_cartesian(xlim=c(-1.5,1.5))+
+        scale_x_continuous(breaks=seq(-1.5,1.5,0.5))+
+        labs(title = 'histogram of residuals (unit: million dollars)')
+
+ggplot(pred)+geom_point(aes(y=prediction,x=price), color='blue', alpha=0.10)+
+        coord_cartesian(xlim=c(-2,2), ylim=c(-2,2))+
+        labs(title='log(price) vs predection', x='log_Price)')
+
+ggplot(residual)+geom_point(aes(x=prediction,y=residual), color='purple', alpha=0.10)+
+        labs(title='prediction vs residual',
+             x='prediction(log_Price) ', y='residual')+
+        coord_cartesian(xlim=c(-2,2), ylim=c(-0.7,0.7))
+
+
+
+house$log_Price=log(house$Price)
+
+ggplot(house)+geom_histogram(aes(x=house$log_Price),
+                             binwidth = 0.1, fill='grey', col='black')+
+        labs(x='House sold price (million)')
+
+test=lm(formula = log_Price ~ BuildingArea + CouncilArea + Type + 
+           Distance + Rooms + YearBuilt + Method + Bathroom + Regionname + 
+           Car + AVGprice + Landsize + Propertycount, data = house)
+test=summary(test)
+print(paste('Adjusted R squared is',summary(model_linear)$adj.r.squared))
+
+
+
+test$adj.r.squared
+summary(model_linear)
+
+test
+null=lm(log_Price~1,data=house)
+full=lm(log_Price~.,data=house)
+stepAIC(null, scope=list(lower=null, upper=full), direction= "forward", trace=TRUE)
+stepAIC(full, direction= "backward", trace=TRUE)
+stepAIC(null, scope=list(lower=null, upper=full), direction= "both", trace=TRUE)
+stepAIC(full, direction= "both", trace=TRUE)
+
+colnames(house)

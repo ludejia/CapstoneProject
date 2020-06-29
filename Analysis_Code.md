@@ -245,14 +245,13 @@ I replace one data point built before 1880 with median value.
 
 “date” is the date the property was sold. The plot shows the average
 price per squar meter for all the property sold per month. We could find
-the the average mont price fluctuate greatly which is a big factor
+the the average month price fluctuate greatly which is a big factor
 affacts the price. Instead of using the date, we would use average price
 per square meter for all the property sold that specific month as a
-variable which reflects the impact of market fluctuation and economical
-influency such as demand and supply. I will not include date in the
-prediction.There are only 16 data points for the first month so the
-average price would can not reflect the true mean very well. These data
-points are removed.
+variable which reflects seanonal impact of market fluctuation and
+economical influency such as demand and supply.There are only 16 data
+points for the first month so the average price would can not reflect
+the true mean very well. So these data points are removed.
 
 ![](Analysis_Code_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
@@ -279,7 +278,7 @@ SellerG is Seller informaion and will not be included.
 
 #### Final dataset to build the model with no missing values
 
-    'data.frame':   10038 obs. of  14 variables:
+    'data.frame':   10038 obs. of  15 variables:
      $ Rooms            : int  3 4 3 2 3 2 2 3 3 2 ...
      $ Type             : Factor w/ 3 levels "house","townhouse",..: 1 1 1 1 1 3 1 1 1 1 ...
      $ Price            : num  1.47 1.6 1.88 1.1 1.35 ...
@@ -287,6 +286,7 @@ SellerG is Seller informaion and will not be included.
      $ Distance         : num  2.5 2.5 2.5 2.5 2.5 2.5 2.5 2.5 2.5 2.5 ...
      $ Bathroom         : int  2 1 2 1 2 2 1 2 1 1 ...
      $ Car              : int  0 2 0 2 2 1 2 1 1 1 ...
+     $ Landsize         : int  571 571 245 220 214 301 238 113 138 150 ...
      $ BuildingArea     : num  150 142 210 75 190 94 97 110 105 73 ...
      $ YearBuilt        : num  1900 2014 1910 1900 2005 ...
      $ CouncilArea      : Factor w/ 33 levels "Banyule City Council",..: 32 32 32 32 32 32 32 32 32 32 ...
@@ -318,7 +318,7 @@ best performance for each algorithm; Adjust features if needed;
 Perform cross-validation to compare performance across different models
 and decide on the final model.
 
-### Modelling
+### linear Modelling
 
 Below is the correlation graph of all the numeric variables and we can
 find that number of rooms are hight correlated with number of bathroom.
@@ -330,13 +330,12 @@ from CBD.
 ### linear model
 
 Below we implemented forward, backward, forward stepwise and backward
-stepwise feature selection, which all select the same feature including
-Rooms, Type, Method, Distance, Bathroom, Car, YearBuilt, CouncilArea,
-Regionname, BuildingAreaRatio, AVGprice. Propertycount would be excluded
-in the model.
+stepwise for feature selection, which all select the same feature
+including Rooms, Type, Method, Distance, Bathroom, Car, YearBuilt,
+CouncilArea, Regionname, BuildingAreaRatio, AVGprice. Propertycount is
+not selected for all the methods.
 
 ``` r
-library(MASS)
 null=lm(Price~1,data=house)
 full=lm(Price~.,data=house)
 stepAIC(null, scope=list(lower=null, upper=full), direction= "forward", trace=TRUE)
@@ -345,7 +344,8 @@ stepAIC(null, scope=list(lower=null, upper=full), direction= "both", trace=TRUE)
 stepAIC(full, direction= "both", trace=TRUE)
 ```
 
-Plot the the prediction, residual of this model
+Below are the summary of the model.Adjusted R-squared is 0.7548 for this
+model. I plot the the prediction, residual of this model.
 
 ``` 
 
@@ -478,6 +478,153 @@ F-statistic: 583.9 on 53 and 9984 DF,  p-value: < 0.00000000000000022
 ```
 
 ![](Analysis_Code_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->![](Analysis_Code_files/figure-gfm/unnamed-chunk-19-2.png)<!-- -->![](Analysis_Code_files/figure-gfm/unnamed-chunk-19-3.png)<!-- -->
+
+From the above graph, we find that the residual shows high level of
+residual heteroscedasticity. So I decide to transform the price to log
+price to minimize the heteroscedasticity. After the transformation, we
+could find from the plot below that log(price) becomes normally
+distributed.
+
+![](Analysis_Code_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+
+Now I build the model again based using same feature selection methods
+like before which all produce the same result and achieve higher adjust
+R square. This time ‘BuildingAreaRatio’ is not selected by all the
+feature selection methods. I discard this feature in our dataset. Our
+final model for linear model is below. From the residual plot we can
+find that heteroscedasticity is not obvious.
+
+``` 
+
+Call:
+lm(formula = log_Price ~ Rooms + Type + Method + Distance + Bathroom + 
+    Car + BuildingArea + YearBuilt + CouncilArea + Regionname + 
+    Propertycount + AVGprice, data = house)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.34223 -0.13174  0.00243  0.13559  1.00719 
+
+Coefficients:
+                                              Estimate   Std. Error
+(Intercept)                                3.916736694  0.159108424
+Rooms                                      0.093788231  0.003868198
+Typetownhouse                             -0.141194760  0.008945118
+Typeunit                                  -0.446905740  0.008064286
+MethodS                                    0.082443117  0.006970691
+MethodSA                                   0.034304409  0.028009971
+MethodSP                                   0.056286178  0.008647514
+MethodVB                                   0.003204652  0.009545194
+Distance                                  -0.028844425  0.000888039
+Bathroom                                   0.056006800  0.004537910
+Car                                        0.024417719  0.002589588
+BuildingArea                               0.002082159  0.000047005
+YearBuilt                                 -0.002148918  0.000080651
+CouncilAreaBayside City Council            0.491145590  0.021719912
+CouncilAreaBoroondara City Council         0.380456146  0.020008419
+CouncilAreaBrimbank City Council          -0.224512350  0.029460957
+CouncilAreaCardinia Shire Council          0.333111355  0.079786504
+CouncilAreaCasey City Council              0.176660874  0.041465888
+CouncilAreaDarebin City Council            0.093585399  0.017811125
+CouncilAreaFrankston City Council          0.382511109  0.038027558
+CouncilAreaGlen Eira City Council          0.288697049  0.020663866
+CouncilAreaGreater Dandenong City Council  0.116718956  0.037618912
+CouncilAreaHobsons Bay City Council        0.022653058  0.031435747
+CouncilAreaHume City Council              -0.149801231  0.019386638
+CouncilAreaKingston City Council           0.292786400  0.027336781
+CouncilAreaKnox City Council               0.043313162  0.024165797
+CouncilAreaMacedon Ranges Shire Council    0.507524971  0.074271460
+CouncilAreaManningham City Council         0.141973957  0.017016952
+CouncilAreaMaribyrnong City Council       -0.111601398  0.031060453
+CouncilAreaMaroondah City Council          0.137361222  0.023260404
+CouncilAreaMelbourne City Council          0.181343044  0.019346291
+CouncilAreaMelton City Council            -0.317208357  0.037700908
+CouncilAreaMitchell Shire Council          0.117853301  0.101165717
+CouncilAreaMonash City Council             0.256388439  0.019013704
+CouncilAreaMoonee Valley City Council      0.046819043  0.030560904
+CouncilAreaMoorabool Shire Council        -0.117278776  0.223555028
+CouncilAreaMoreland City Council           0.044850843  0.018142728
+CouncilAreaNillumbik Shire Council        -0.085925163  0.054076955
+CouncilAreaPort Phillip City Council       0.225403069  0.022861700
+CouncilAreaStonnington City Council        0.364083958  0.023266558
+CouncilAreaWhitehorse City Council         0.181917738  0.021338155
+CouncilAreaWhittlesea City Council        -0.040689047  0.020995725
+CouncilAreaWyndham City Council           -0.343452589  0.030923409
+CouncilAreaYarra City Council              0.229251362  0.021431789
+CouncilAreaYarra Ranges Shire Council      0.166274095  0.063197972
+RegionnameEastern Victoria                -0.022145010  0.047445237
+RegionnameNorthern Metropolitan           -0.197851151  0.017316487
+RegionnameNorthern Victoria                0.021818286  0.049626415
+RegionnameSouth-Eastern Metropolitan      -0.071076957  0.025388575
+RegionnameSouthern Metropolitan           -0.100414703  0.017992342
+RegionnameWestern Metropolitan            -0.096082718  0.028946895
+RegionnameWestern Victoria                 0.026129059  0.051505178
+Propertycount                              0.000042703  0.000022450
+AVGprice                                  -0.000022195  0.000003813
+                                          t value             Pr(>|t|)    
+(Intercept)                                24.617 < 0.0000000000000002 ***
+Rooms                                      24.246 < 0.0000000000000002 ***
+Typetownhouse                             -15.785 < 0.0000000000000002 ***
+Typeunit                                  -55.418 < 0.0000000000000002 ***
+MethodS                                    11.827 < 0.0000000000000002 ***
+MethodSA                                    1.225             0.220709    
+MethodSP                                    6.509   0.0000000000793163 ***
+MethodVB                                    0.336             0.737078    
+Distance                                  -32.481 < 0.0000000000000002 ***
+Bathroom                                   12.342 < 0.0000000000000002 ***
+Car                                         9.429 < 0.0000000000000002 ***
+BuildingArea                               44.296 < 0.0000000000000002 ***
+YearBuilt                                 -26.645 < 0.0000000000000002 ***
+CouncilAreaBayside City Council            22.613 < 0.0000000000000002 ***
+CouncilAreaBoroondara City Council         19.015 < 0.0000000000000002 ***
+CouncilAreaBrimbank City Council           -7.621   0.0000000000000275 ***
+CouncilAreaCardinia Shire Council           4.175   0.0000300471363128 ***
+CouncilAreaCasey City Council               4.260   0.0000205941909019 ***
+CouncilAreaDarebin City Council             5.254   0.0000001516339797 ***
+CouncilAreaFrankston City Council          10.059 < 0.0000000000000002 ***
+CouncilAreaGlen Eira City Council          13.971 < 0.0000000000000002 ***
+CouncilAreaGreater Dandenong City Council   3.103             0.001923 ** 
+CouncilAreaHobsons Bay City Council         0.721             0.471164    
+CouncilAreaHume City Council               -7.727   0.0000000000000121 ***
+CouncilAreaKingston City Council           10.710 < 0.0000000000000002 ***
+CouncilAreaKnox City Council                1.792             0.073110 .  
+CouncilAreaMacedon Ranges Shire Council     6.833   0.0000000000087780 ***
+CouncilAreaManningham City Council          8.343 < 0.0000000000000002 ***
+CouncilAreaMaribyrnong City Council        -3.593             0.000328 ***
+CouncilAreaMaroondah City Council           5.905   0.0000000036334248 ***
+CouncilAreaMelbourne City Council           9.374 < 0.0000000000000002 ***
+CouncilAreaMelton City Council             -8.414 < 0.0000000000000002 ***
+CouncilAreaMitchell Shire Council           1.165             0.244066    
+CouncilAreaMonash City Council             13.484 < 0.0000000000000002 ***
+CouncilAreaMoonee Valley City Council       1.532             0.125556    
+CouncilAreaMoorabool Shire Council         -0.525             0.599867    
+CouncilAreaMoreland City Council            2.472             0.013448 *  
+CouncilAreaNillumbik Shire Council         -1.589             0.112105    
+CouncilAreaPort Phillip City Council        9.859 < 0.0000000000000002 ***
+CouncilAreaStonnington City Council        15.648 < 0.0000000000000002 ***
+CouncilAreaWhitehorse City Council          8.525 < 0.0000000000000002 ***
+CouncilAreaWhittlesea City Council         -1.938             0.052655 .  
+CouncilAreaWyndham City Council           -11.107 < 0.0000000000000002 ***
+CouncilAreaYarra City Council              10.697 < 0.0000000000000002 ***
+CouncilAreaYarra Ranges Shire Council       2.631             0.008526 ** 
+RegionnameEastern Victoria                 -0.467             0.640690    
+RegionnameNorthern Metropolitan           -11.426 < 0.0000000000000002 ***
+RegionnameNorthern Victoria                 0.440             0.660200    
+RegionnameSouth-Eastern Metropolitan       -2.800             0.005127 ** 
+RegionnameSouthern Metropolitan            -5.581   0.0000000245428510 ***
+RegionnameWestern Metropolitan             -3.319             0.000906 ***
+RegionnameWestern Victoria                  0.507             0.611949    
+Propertycount                               1.902             0.057181 .  
+AVGprice                                   -5.821   0.0000000060380761 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.2183 on 9984 degrees of freedom
+Multiple R-squared:  0.8215,    Adjusted R-squared:  0.8206 
+F-statistic: 867.2 on 53 and 9984 DF,  p-value: < 0.00000000000000022
+```
+
+![](Analysis_Code_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->![](Analysis_Code_files/figure-gfm/unnamed-chunk-21-2.png)<!-- -->![](Analysis_Code_files/figure-gfm/unnamed-chunk-21-3.png)<!-- -->
 
 ## Reference
 
