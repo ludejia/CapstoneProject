@@ -5,7 +5,7 @@
 
 #### For best display, please visit project github page <https://github.com/ludejia/CapstoneProject>
 
-#### Analysis and code are in the R mark down file ‘Analysis\_Code.RMD’
+#### Analysis and code are in the R mark down file ‘Code.RMD’
 
 #### Dejia Lu
 
@@ -80,7 +80,7 @@ predict. Below provides the summary for the data and visualizaiton of
 missing
 values.
 
-![](Analysis_Code_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->![](Analysis_Code_files/figure-gfm/unnamed-chunk-1-2.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->![](Code_files/figure-gfm/unnamed-chunk-1-2.png)<!-- -->
 
 #### *Attributes explanation and selection*
 
@@ -90,8 +90,8 @@ values.
 are missing. Below we can visualize the location of the properties on
 google map and see which area has the high density of the property.
 
-![](Analysis_Code_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
-\#\#\#\# Price & PricePerSquareMeters
+![](Code_files/figure-gfm/unnamed-chunk-2-1.png)<!-- --> \#\#\#\# Price
+& PricePerSquareMeters
 
 “Price” is the sold price in Australian dollar for the property. I
 replace the unit of price to million Australian dollars. I created a
@@ -107,7 +107,7 @@ I removed the outliers by discarding the data with price per square
 meter less than 2000 and over 15000 based on reasonable price range in
 Melbourne.
 
-![](Analysis_Code_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->![](Analysis_Code_files/figure-gfm/unnamed-chunk-3-2.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->![](Code_files/figure-gfm/unnamed-chunk-3-2.png)<!-- -->
 
 #### BuildingArea, Landsize, Building Area Ratio
 
@@ -128,7 +128,7 @@ because for unit and townhouse, multiple properties share one land, and
 Building Area Ratio would be relative small. Building Area ratio
 reflects the interaction between landize and building type.
 
-![](Analysis_Code_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 #### Suburb, Postcode, Regionname, CouncilArea
 
@@ -139,7 +139,7 @@ different sections. Below we can find Suburb has the finest divisions
 I will only use CouncilArea and region name as the rest have too many
 categories.
 
-![](Analysis_Code_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 This map shows the boundaries of Suburb, Postal Code, Council and
 Region.
@@ -154,7 +154,7 @@ I use council area and Region name as geigraphycal variable and discard
 the rest including GPS
 info.
 
-![](Analysis_Code_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->![](Analysis_Code_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->![](Code_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->
 
 #### Propertycount
 
@@ -163,7 +163,7 @@ the property is located. We can see most properties are in a suburb
 which has less than 50 properties in its suburb. I converted it from
 categorial to numeric.
 
-![](Analysis_Code_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 #### address
 
@@ -183,7 +183,7 @@ There are three types of houses.
 Below we could see the total number of each type and sold price
 distribution.
 
-![](Analysis_Code_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->![](Analysis_Code_files/figure-gfm/unnamed-chunk-8-2.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->![](Code_files/figure-gfm/unnamed-chunk-8-2.png)<!-- -->
 
 #### Rooms, bedroom2
 
@@ -192,14 +192,14 @@ in the property. “Rooms” has no missing value and “bedroom2” has 23%
 percent missing value and is scraped by the contributor from different
 sources. “bedroom2” would be discarded in the model.
 
-![](Analysis_Code_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 #### bathroom
 
 “bathroom” is the number of bathroom. Below we can find “bathroom” and
 “rooms” are correlated.
 
-![](Analysis_Code_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 ``` 
 
@@ -221,14 +221,14 @@ sample estimates:
 shows the distribution. Car has 1.67% missing values which are imputed
 using median.
 
-![](Analysis_Code_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 #### Distance
 
 “Distance” is the distance in km from the property to the center
 business district.
 
-![](Analysis_Code_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 #### yearbuilt
 
@@ -239,7 +239,7 @@ values. For yearbuilt, I will use numeric format.
 
 I replace one data point built before 1880 with median value.
 
-![](Analysis_Code_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 #### date & AVGmonth\_price
 
@@ -253,7 +253,7 @@ economical influency such as demand and supply.There are only 16 data
 points for the first month so the average price would can not reflect
 the true mean very well. So these data points are removed.
 
-![](Analysis_Code_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
 #### method
 
@@ -270,7 +270,7 @@ SP - property sold prior;
 
 VB - vendor bid
 
-![](Analysis_Code_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
 #### SellerG
 
@@ -296,7 +296,7 @@ SellerG is Seller informaion and will not be included.
      $ AVGprice         : num  7851 7533 7462 8016 8038 ...
     NULL
 
-![](Analysis_Code_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 ## Approach
 
@@ -325,7 +325,7 @@ find that number of rooms are hight correlated with number of bathroom.
 Price per square meter is highly correlated with YearBuilt and Distance
 from CBD.
 
-![](Analysis_Code_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
 ### linear model
 
@@ -477,7 +477,7 @@ Multiple R-squared:  0.7561,    Adjusted R-squared:  0.7548
 F-statistic: 583.9 on 53 and 9984 DF,  p-value: < 0.00000000000000022
 ```
 
-![](Analysis_Code_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->![](Analysis_Code_files/figure-gfm/unnamed-chunk-19-2.png)<!-- -->![](Analysis_Code_files/figure-gfm/unnamed-chunk-19-3.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->![](Code_files/figure-gfm/unnamed-chunk-19-2.png)<!-- -->![](Code_files/figure-gfm/unnamed-chunk-19-3.png)<!-- -->
 
 From the above graph, we find that the residual shows high level of
 residual heteroscedasticity. So I decide to transform the price to log
@@ -485,7 +485,7 @@ price to minimize the heteroscedasticity. After the transformation, we
 could find from the plot below that log(price) becomes normally
 distributed.
 
-![](Analysis_Code_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
 Now I build the model again based using same feature selection methods
 like before which all produce the same result and achieve higher adjust
@@ -625,7 +625,7 @@ Multiple R-squared:  0.8215,    Adjusted R-squared:  0.8206
 F-statistic: 867.2 on 53 and 9984 DF,  p-value: < 0.00000000000000022
 ```
 
-![](Analysis_Code_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->![](Analysis_Code_files/figure-gfm/unnamed-chunk-21-2.png)<!-- -->![](Analysis_Code_files/figure-gfm/unnamed-chunk-21-3.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->![](Code_files/figure-gfm/unnamed-chunk-21-2.png)<!-- -->![](Code_files/figure-gfm/unnamed-chunk-21-3.png)<!-- -->
 
 ## Reference
 

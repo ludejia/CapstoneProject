@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo=FALSE, comment=NA, message=FALSE,warning = FALSE)
 # CKME 136 Capstone Project 
 # Melbourne House Sales Price Predictive Analysis
 #### For best display, please visit project github page https://github.com/ludejia/CapstoneProject
-#### Analysis and code are in the R mark down file ‘Analysis_Code.RMD’
+#### Analysis and code are in the R mark down file ‘Code.RMD’
 
 #### Dejia Lu
 #### Ryerson University 501005537
