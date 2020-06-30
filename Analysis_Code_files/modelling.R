@@ -312,3 +312,49 @@ stepAIC(null, scope=list(lower=null, upper=full), direction= "both", trace=TRUE)
 stepAIC(full, direction= "both", trace=TRUE)
 
 colnames(house)
+?train
+?trainControl
+
+
+
+library(caret)
+set.seed(666)
+custom <- trainControl(method = "repeatedcv",
+                       number = 4,
+                       repeats =15,
+                       verboseIter = T)
+
+eva_linear <- train(log_Price ~., data = house,
+            method='lm',
+            trControl=custom)
+mev_linear=data.frame(eva_linear$resample)
+mev_linear$type='Linear Regression'
+mev_linear=mev_linear[,-which(names(mev_linear)=='Rsquared')]
+
+ggplot(mev_linear)+geom_histogram(aes(x=mev_linear$RMSE),
+                             binwidth = 0.0025, fill='grey', col='black')
+
+
+library(party)
+eva_tree <- train(log_Price ~., data = house,
+                    method='ctree2',
+                    tuneGrid=expand.grid(mincriterion =c(0.1),
+                                         maxdepth=0),
+                    trControl=custom)
+
+mev_tree = data.frame(eva_tree$resample)
+mev_tree$type='Decision Tree'
+mev_tree=mev_tree[,-which(names(mev_tree)=='Rsquared')]
+
+ggplot(mev_tree)+geom_histogram(aes(x=mev_tree$RMSE),
+                                  binwidth = 0.0025, fill='grey', col='black')
+t.test(mev_linear$RMSE,mev_tree$RMSE)
+
+mean(mev_linear$RMSE)
+mean(mev_tree$RMSE)
+
+eva_all=rbind(mev_linear,mev_tree)
+ggplot(eva_all)+geom_density(aes(eva_all$RMSE,fill=eva_all$type),alpha=0.4)
+
+
+

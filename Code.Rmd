@@ -506,7 +506,7 @@ Now I build the model again based using same feature selection methods like befo
 ```{r}
 model_linear=lm(formula = log_Price ~ Rooms + Type + Method + Distance + Bathroom + 
     Car + BuildingArea + YearBuilt + CouncilArea + Regionname + 
-    Propertycount + AVGprice, data = house)
+    Propertycount + AVGprice+Landsize, data = house)
 summary(model_linear)
 residual=data.frame(residual=model_linear$residuals, prediction=model_linear$fitted.values)
 pred=data.frame(price=model_linear$model$log_Price, prediction=model_linear$fitted.values)
@@ -526,6 +526,12 @@ ggplot(residual)+geom_point(aes(x=prediction,y=residual), color='purple', alpha=
         coord_cartesian(xlim=c(-2,2), ylim=c(-0.7,0.7))
 house=house[,-which(names(house)=='BuildingAreaRatio')]
 ```
+
+
+
+### Algorithm evaluation and selection
+
+
 
 
 ## Reference
