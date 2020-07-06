@@ -425,10 +425,77 @@ ggplot(eva_all)+geom_density(aes(eva_all$RMSE,fill=eva_all$type),alpha=0.4)+
         theme(legend.title = element_blank())
 
 
-#### elastic net
+#### xgbboost
+
+?train
+library(xgboost)
+library(plyr)
+xgbmodel <- train(log_Price ~., data = house,
+                  method='xgbTree',
+                  tuneGrid=expand.grid(nrounds=45,
+                                       eta=seq(0.25,0.8,length=4),
+                                       gamma=12.5,
+                                       max_depth=6,
+                                       colsample_bytree=1,
+                                       min_child_weight=1,
+                                       subsample=1),
+                  trControl=custom)
+plot(xgbmodel)
 
 
+xgbmodel <- train(log_Price ~., data = house,
+                  method='xgbTree',
+                  tuneGrid=expand.grid(nrounds=c(45,100,150),
+                                       eta=0.25,
+                                       gamma=c(0,5,12.5),
+                                       max_depth=6,
+                                       colsample_bytree=1,
+                                       min_child_weight=1,
+                                       subsample=1),
+                  trControl=custom)
+# gamma=0 is the best
+
+plot(xgbmodel)
 
 
+xgbmodel <- train(log_Price ~., data = house,
+                  method='xgbTree',
+                  tuneGrid=expand.grid(nrounds=c(150,200,250),
+                                       eta=c(0.05,0.1,0.15,0.2),
+                                       gamma=0,
+                                       max_depth=6,
+                                       colsample_bytree=1,
+                                       min_child_weight=1,
+                                       subsample=1),
+                  trControl=custom)
+
+plot(xgbmodel)
+
+
+eva_XGBoost <- train(log_Price ~., data = house,
+                  method='xgbTree',
+                  tuneGrid=expand.grid(nrounds=500,
+                                       eta=0.1,
+                                       gamma=0,
+                                       max_depth=6,
+                                       colsample_bytree=1,
+                                       min_child_weight=1,
+                                       subsample=1),
+                  trControl=custom)
+
+mev_XGBoost = data.frame(eva_XGBoost$resample)
+mev_XGBoost$type='XGBoost'
+mev_XGBoost=mev_XGBoost[,-which(names(mev_XGBoost)=='Rsquared')]
+
+ggplot(mev_XGBoost)+geom_histogram(aes(x=mev_XGBoost$RMSE),
+                                      binwidth = 0.0025, fill='grey', col='black')
+
+print(paste0("Mean RMSE of Ridge Regression model is ", mean(mev_XGBoost$RMSE)))
+mev_all=rbind(mev_all,mev_XGBoost)
+ggplot(mev_all)+geom_density(aes(mev_all$RMSE,fill=mev_all$type),alpha=0.4)+
+        theme(legend.title = element_blank())+
+        labs(x='RMSE')
+
+?t.test
 
 

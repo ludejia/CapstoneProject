@@ -664,6 +664,52 @@ ggplot(mev_all)+geom_density(aes(mev_all$RMSE,fill=mev_all$type),alpha=0.4)+
   labs(x='RMSE')
 
 ```
+#### XGBoost
+
+Applied XGBoost to the model. Below is an example while I was tuning the parameters to find the best performance model. We can see more trees produce better result and 0.1 is the best shrinkage. With the increasing number of trees, the model building becomes slower. The package I use is "caret" and "xgboost". The tuning parameter for the final model are nrounds=500, eta=0.1,gamma=0,max_depth=6,colsample_bytree=1,min_child_weight=1,subsample=1.
+
+![](./map/xgbboost.png)
+
+```{r}
+eva_XGBoost <- train(log_Price ~., data = house,
+                  method='xgbTree',
+                  tuneGrid=expand.grid(nrounds=500,
+                                       eta=0.1,
+                                       gamma=0,
+                                       max_depth=6,
+                                       colsample_bytree=1,
+                                       min_child_weight=1,
+                                       subsample=1),
+                  trControl=custom)
+```
+Below we can fing that XGBoost have the best performance among all the models.
+```{r}
+mev_XGBoost = data.frame(eva_XGBoost$resample)
+mev_XGBoost$type='XGBoost'
+mev_XGBoost=mev_XGBoost[,-which(names(mev_XGBoost)=='Rsquared')]
+
+ggplot(mev_XGBoost)+geom_histogram(aes(x=mev_XGBoost$RMSE),
+                                      binwidth = 0.0025, fill='grey', col='black')
+
+print(paste0("Mean RMSE of Ridge Regression model is ", mean(mev_XGBoost$RMSE)))
+mev_all=rbind(mev_all,mev_XGBoost)
+ggplot(mev_all)+geom_density(aes(mev_all$RMSE,fill=mev_all$type),alpha=0.4)+
+        theme(legend.title = element_blank())+
+        labs(x='RMSE')
+```
+
+Comparing XGBoost with Random Forest, t.test shows a siginicant difference. 
+```{r}
+t.test(mev_Forest$RMSE,mev_XGBoost$RMSE)
+```
+
+
+
+## Conclusion
+
+log helps. 
+tree model slow to build but better performance.
+
 
 
 ## Reference
