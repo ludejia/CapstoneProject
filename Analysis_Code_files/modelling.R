@@ -321,7 +321,7 @@ library(caret)
 set.seed(666)
 custom <- trainControl(method = "repeatedcv",
                        number = 4,
-                       repeats =15,
+                       repeats =12,
                        verboseIter = T)
 
 eva_linear <- train(log_Price ~., data = house,
@@ -335,7 +335,8 @@ ggplot(mev_linear)+geom_histogram(aes(x=mev_linear$RMSE),
                              binwidth = 0.0025, fill='grey', col='black')
 
 
-library(party)
+
+
 eva_tree <- train(log_Price ~., data = house,
                     method='ctree2',
                     tuneGrid=expand.grid(mincriterion =c(0.1),
@@ -348,13 +349,86 @@ mev_tree=mev_tree[,-which(names(mev_tree)=='Rsquared')]
 
 ggplot(mev_tree)+geom_histogram(aes(x=mev_tree$RMSE),
                                   binwidth = 0.0025, fill='grey', col='black')
-t.test(mev_linear$RMSE,mev_tree$RMSE)
 
+t.test(mev_linear$RMSE,mev_tree$RMSE)
 mean(mev_linear$RMSE)
 mean(mev_tree$RMSE)
-
 eva_all=rbind(mev_linear,mev_tree)
 ggplot(eva_all)+geom_density(aes(eva_all$RMSE,fill=eva_all$type),alpha=0.4)
+
+
+
+#### Random Forest
+
+
+
+custom <- trainControl(method = "repeatedcv",
+                       number = 4,
+                       repeats= 10,
+                       verboseIter = T)
+
+eva_Forest <- train(log_Price ~., data = house,
+                  method='rf',
+                  tuneGrid=expand.grid(mtry =c(11)),
+                  trControl=custom)
+
+
+mev_Forest = data.frame(eva_Forest$resample)
+mev_Forest$type='Random Forest'
+mev_Forest=mev_Forest[,-which(names(mev_Forest)=='Rsquared')]
+
+ggplot(mev_Forest)+geom_histogram(aes(x=mev_Forest$RMSE),
+                                binwidth = 0.0025, fill='grey', col='black')
+
+print(paste0("Mean RMSE of Random Forest model is ", mean(mev_Forest$RMSE)))
+eva_all=rbind(eva_all,mev_Forest)
+ggplot(eva_all)+geom_density(aes(eva_all$RMSE,fill=eva_all$type),alpha=0.4)+
+        theme(legend.title = element_blank())
+
+#### ridge, lasso, Elastic Net regression
+
+eva_ElasticNet <- train(log_Price ~., data = house,
+            method='glmnet',
+            tuneGrid=expand.grid(alpha=seq(0,1,length=10),
+                                 lambda=c(0.1, 0.3, 0.5, 0.7, 0.9)),
+            trControl=custom)
+
+eva_ElasticNet <- train(log_Price ~., data = house,
+                        method='glmnet',
+                        tuneGrid=expand.grid(alpha=0,
+                                             lambda=c(0.005,0.01,0.05,0.1)),
+                        trControl=custom)
+
+plot(eva_ElasticNet)
+
+
+
+#### lasso
+
+eva_ElasticNet <- train(log_Price ~., data = house,
+                        method='glmnet',
+                        tuneGrid=expand.grid(alpha=0,
+                                             lambda=0.01),
+                        trControl=custom)
+
+
+mev_ElasticNet = data.frame(eva_ElasticNet$resample)
+mev_ElasticNet$type='Ridge Regression'
+mev_ElasticNet=mev_ElasticNet[,-which(names(mev_ElasticNet)=='Rsquared')]
+
+ggplot(mev_ElasticNet)+geom_histogram(aes(x=mev_ElasticNet$RMSE),
+                                  binwidth = 0.0025, fill='grey', col='black')
+
+print(paste0("Mean RMSE of Ridge Regression model is ", mean(mev_ElasticNet$RMSE)))
+eva_all=rbind(eva_all,mev_ElasticNet)
+ggplot(eva_all)+geom_density(aes(eva_all$RMSE,fill=eva_all$type),alpha=0.4)+
+        theme(legend.title = element_blank())
+
+
+#### elastic net
+
+
+
 
 
 

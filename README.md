@@ -207,7 +207,7 @@ sources. “bedroom2” would be discarded in the model.
     Pearson's product-moment correlation
 
 data:  house$Rooms and house$Bathroom
-t = 80.279, df = 10053, p-value < 0.00000000000000022
+t = 80.279, df = 10053, p-value < 2.2e-16
 alternative hypothesis: true correlation is not equal to 0
 95 percent confidence interval:
  0.6129583 0.6367832
@@ -360,122 +360,122 @@ Residuals:
 -2.1278 -0.1608 -0.0144  0.1350  3.4949 
 
 Coefficients:
-                                              Estimate   Std. Error
-(Intercept)                                6.040481025  0.223078257
-Rooms                                      0.058586413  0.005438812
-Typetownhouse                             -0.116468252  0.013600231
-Typeunit                                  -0.317379773  0.011301465
-MethodS                                    0.069033265  0.009767946
-MethodSA                                   0.017224242  0.039250454
-MethodSP                                   0.055926836  0.012118043
-MethodVB                                   0.014679670  0.013375537
-Distance                                  -0.032519498  0.001246961
-Bathroom                                   0.096063150  0.006363059
-Car                                        0.022099315  0.003678288
-BuildingArea                               0.003562500  0.000072075
-YearBuilt                                 -0.002725600  0.000113005
-CouncilAreaBayside City Council            0.629943472  0.030436126
-CouncilAreaBoroondara City Council         0.569836186  0.028031913
-CouncilAreaBrimbank City Council          -0.167151717  0.041069659
-CouncilAreaCardinia Shire Council          0.567896291  0.111805410
-CouncilAreaCasey City Council              0.273151170  0.058108156
-CouncilAreaDarebin City Council            0.145101021  0.024906397
-CouncilAreaFrankston City Council          0.510356608  0.053293312
-CouncilAreaGlen Eira City Council          0.322172319  0.028955374
-CouncilAreaGreater Dandenong City Council  0.199590652  0.052691592
-CouncilAreaHobsons Bay City Council        0.063086190  0.043631640
-CouncilAreaHume City Council              -0.019273880  0.027166859
-CouncilAreaKingston City Council           0.301917490  0.038261981
-CouncilAreaKnox City Council               0.007476027  0.033859672
-CouncilAreaMacedon Ranges Shire Council    0.357611106  0.104058755
-CouncilAreaManningham City Council         0.086849894  0.023739890
-CouncilAreaMaribyrnong City Council       -0.059446227  0.043176252
-CouncilAreaMaroondah City Council          0.110322310  0.032594366
-CouncilAreaMelbourne City Council          0.220553912  0.027105062
-CouncilAreaMelton City Council            -0.247857833  0.052622744
-CouncilAreaMitchell Shire Council          0.267983109  0.141725501
-CouncilAreaMonash City Council             0.254178068  0.026632847
-CouncilAreaMoonee Valley City Council      0.067693064  0.042451829
-CouncilAreaMoorabool Shire Council        -0.029462408  0.313257884
-CouncilAreaMoreland City Council           0.105132901  0.025396937
-CouncilAreaNillumbik Shire Council        -0.215157736  0.075669466
-CouncilAreaPort Phillip City Council       0.303937146  0.032036332
-CouncilAreaStonnington City Council        0.566804451  0.032470396
-CouncilAreaWhitehorse City Council         0.150282509  0.029825207
-CouncilAreaWhittlesea City Council         0.056609047  0.029444789
-CouncilAreaWyndham City Council           -0.210328832  0.043327431
-CouncilAreaYarra City Council              0.277919873  0.030055117
-CouncilAreaYarra Ranges Shire Council      0.251612641  0.088482372
-RegionnameEastern Victoria                -0.066349973  0.066490929
-RegionnameNorthern Metropolitan           -0.232192281  0.024267766
-RegionnameNorthern Victoria                0.215432261  0.069531856
-RegionnameSouth-Eastern Metropolitan      -0.087271025  0.035447062
-RegionnameSouthern Metropolitan           -0.117006377  0.025196700
-RegionnameWestern Metropolitan            -0.128513682  0.040443480
-RegionnameWestern Victoria                 0.261773215  0.072121118
-BuildingAreaRatio                         -0.160100219  0.019268954
-AVGprice                                  -0.000019245  0.000005343
-                                          t value             Pr(>|t|)    
-(Intercept)                                27.078 < 0.0000000000000002 ***
-Rooms                                      10.772 < 0.0000000000000002 ***
-Typetownhouse                              -8.564 < 0.0000000000000002 ***
-Typeunit                                  -28.083 < 0.0000000000000002 ***
-MethodS                                     7.067 0.000000000001685094 ***
-MethodSA                                    0.439             0.660795    
-MethodSP                                    4.615 0.000003976701831176 ***
-MethodVB                                    1.098             0.272449    
-Distance                                  -26.079 < 0.0000000000000002 ***
-Bathroom                                   15.097 < 0.0000000000000002 ***
-Car                                         6.008 0.000000001943339018 ***
-BuildingArea                               49.428 < 0.0000000000000002 ***
-YearBuilt                                 -24.119 < 0.0000000000000002 ***
-CouncilAreaBayside City Council            20.697 < 0.0000000000000002 ***
-CouncilAreaBoroondara City Council         20.328 < 0.0000000000000002 ***
-CouncilAreaBrimbank City Council           -4.070 0.000047384242348457 ***
-CouncilAreaCardinia Shire Council           5.079 0.000000385618146649 ***
-CouncilAreaCasey City Council               4.701 0.000002626934518906 ***
-CouncilAreaDarebin City Council             5.826 0.000000005857863144 ***
-CouncilAreaFrankston City Council           9.576 < 0.0000000000000002 ***
-CouncilAreaGlen Eira City Council          11.127 < 0.0000000000000002 ***
-CouncilAreaGreater Dandenong City Council   3.788             0.000153 ***
-CouncilAreaHobsons Bay City Council         1.446             0.148242    
-CouncilAreaHume City Council               -0.709             0.478054    
-CouncilAreaKingston City Council            7.891 0.000000000000003318 ***
-CouncilAreaKnox City Council                0.221             0.825257    
-CouncilAreaMacedon Ranges Shire Council     3.437             0.000591 ***
-CouncilAreaManningham City Council          3.658             0.000255 ***
-CouncilAreaMaribyrnong City Council        -1.377             0.168597    
-CouncilAreaMaroondah City Council           3.385             0.000715 ***
-CouncilAreaMelbourne City Council           8.137 0.000000000000000453 ***
-CouncilAreaMelton City Council             -4.710 0.000002509476407201 ***
-CouncilAreaMitchell Shire Council           1.891             0.058672 .  
-CouncilAreaMonash City Council              9.544 < 0.0000000000000002 ***
-CouncilAreaMoonee Valley City Council       1.595             0.110837    
-CouncilAreaMoorabool Shire Council         -0.094             0.925070    
-CouncilAreaMoreland City Council            4.140 0.000035078698242898 ***
-CouncilAreaNillumbik Shire Council         -2.843             0.004473 ** 
-CouncilAreaPort Phillip City Council        9.487 < 0.0000000000000002 ***
-CouncilAreaStonnington City Council        17.456 < 0.0000000000000002 ***
-CouncilAreaWhitehorse City Council          5.039 0.000000476727386530 ***
-CouncilAreaWhittlesea City Council          1.923             0.054565 .  
-CouncilAreaWyndham City Council            -4.854 0.000001225799299406 ***
-CouncilAreaYarra City Council               9.247 < 0.0000000000000002 ***
-CouncilAreaYarra Ranges Shire Council       2.844             0.004469 ** 
-RegionnameEastern Victoria                 -0.998             0.318362    
-RegionnameNorthern Metropolitan            -9.568 < 0.0000000000000002 ***
-RegionnameNorthern Victoria                 3.098             0.001952 ** 
-RegionnameSouth-Eastern Metropolitan       -2.462             0.013833 *  
-RegionnameSouthern Metropolitan            -4.644 0.000003465632334594 ***
-RegionnameWestern Metropolitan             -3.178             0.001489 ** 
-RegionnameWestern Victoria                  3.630             0.000285 ***
-BuildingAreaRatio                          -8.309 < 0.0000000000000002 ***
-AVGprice                                   -3.602             0.000318 ***
+                                            Estimate Std. Error t value
+(Intercept)                                6.040e+00  2.231e-01  27.078
+Rooms                                      5.859e-02  5.439e-03  10.772
+Typetownhouse                             -1.165e-01  1.360e-02  -8.564
+Typeunit                                  -3.174e-01  1.130e-02 -28.083
+MethodS                                    6.903e-02  9.768e-03   7.067
+MethodSA                                   1.722e-02  3.925e-02   0.439
+MethodSP                                   5.593e-02  1.212e-02   4.615
+MethodVB                                   1.468e-02  1.338e-02   1.098
+Distance                                  -3.252e-02  1.247e-03 -26.079
+Bathroom                                   9.606e-02  6.363e-03  15.097
+Car                                        2.210e-02  3.678e-03   6.008
+BuildingArea                               3.563e-03  7.208e-05  49.428
+YearBuilt                                 -2.726e-03  1.130e-04 -24.119
+CouncilAreaBayside City Council            6.299e-01  3.044e-02  20.697
+CouncilAreaBoroondara City Council         5.698e-01  2.803e-02  20.328
+CouncilAreaBrimbank City Council          -1.672e-01  4.107e-02  -4.070
+CouncilAreaCardinia Shire Council          5.679e-01  1.118e-01   5.079
+CouncilAreaCasey City Council              2.732e-01  5.811e-02   4.701
+CouncilAreaDarebin City Council            1.451e-01  2.491e-02   5.826
+CouncilAreaFrankston City Council          5.104e-01  5.329e-02   9.576
+CouncilAreaGlen Eira City Council          3.222e-01  2.896e-02  11.127
+CouncilAreaGreater Dandenong City Council  1.996e-01  5.269e-02   3.788
+CouncilAreaHobsons Bay City Council        6.309e-02  4.363e-02   1.446
+CouncilAreaHume City Council              -1.927e-02  2.717e-02  -0.709
+CouncilAreaKingston City Council           3.019e-01  3.826e-02   7.891
+CouncilAreaKnox City Council               7.476e-03  3.386e-02   0.221
+CouncilAreaMacedon Ranges Shire Council    3.576e-01  1.041e-01   3.437
+CouncilAreaManningham City Council         8.685e-02  2.374e-02   3.658
+CouncilAreaMaribyrnong City Council       -5.945e-02  4.318e-02  -1.377
+CouncilAreaMaroondah City Council          1.103e-01  3.259e-02   3.385
+CouncilAreaMelbourne City Council          2.206e-01  2.711e-02   8.137
+CouncilAreaMelton City Council            -2.479e-01  5.262e-02  -4.710
+CouncilAreaMitchell Shire Council          2.680e-01  1.417e-01   1.891
+CouncilAreaMonash City Council             2.542e-01  2.663e-02   9.544
+CouncilAreaMoonee Valley City Council      6.769e-02  4.245e-02   1.595
+CouncilAreaMoorabool Shire Council        -2.946e-02  3.133e-01  -0.094
+CouncilAreaMoreland City Council           1.051e-01  2.540e-02   4.140
+CouncilAreaNillumbik Shire Council        -2.152e-01  7.567e-02  -2.843
+CouncilAreaPort Phillip City Council       3.039e-01  3.204e-02   9.487
+CouncilAreaStonnington City Council        5.668e-01  3.247e-02  17.456
+CouncilAreaWhitehorse City Council         1.503e-01  2.983e-02   5.039
+CouncilAreaWhittlesea City Council         5.661e-02  2.944e-02   1.923
+CouncilAreaWyndham City Council           -2.103e-01  4.333e-02  -4.854
+CouncilAreaYarra City Council              2.779e-01  3.006e-02   9.247
+CouncilAreaYarra Ranges Shire Council      2.516e-01  8.848e-02   2.844
+RegionnameEastern Victoria                -6.635e-02  6.649e-02  -0.998
+RegionnameNorthern Metropolitan           -2.322e-01  2.427e-02  -9.568
+RegionnameNorthern Victoria                2.154e-01  6.953e-02   3.098
+RegionnameSouth-Eastern Metropolitan      -8.727e-02  3.545e-02  -2.462
+RegionnameSouthern Metropolitan           -1.170e-01  2.520e-02  -4.644
+RegionnameWestern Metropolitan            -1.285e-01  4.044e-02  -3.178
+RegionnameWestern Victoria                 2.618e-01  7.212e-02   3.630
+BuildingAreaRatio                         -1.601e-01  1.927e-02  -8.309
+AVGprice                                  -1.924e-05  5.343e-06  -3.602
+                                          Pr(>|t|)    
+(Intercept)                                < 2e-16 ***
+Rooms                                      < 2e-16 ***
+Typetownhouse                              < 2e-16 ***
+Typeunit                                   < 2e-16 ***
+MethodS                                   1.69e-12 ***
+MethodSA                                  0.660795    
+MethodSP                                  3.98e-06 ***
+MethodVB                                  0.272449    
+Distance                                   < 2e-16 ***
+Bathroom                                   < 2e-16 ***
+Car                                       1.94e-09 ***
+BuildingArea                               < 2e-16 ***
+YearBuilt                                  < 2e-16 ***
+CouncilAreaBayside City Council            < 2e-16 ***
+CouncilAreaBoroondara City Council         < 2e-16 ***
+CouncilAreaBrimbank City Council          4.74e-05 ***
+CouncilAreaCardinia Shire Council         3.86e-07 ***
+CouncilAreaCasey City Council             2.63e-06 ***
+CouncilAreaDarebin City Council           5.86e-09 ***
+CouncilAreaFrankston City Council          < 2e-16 ***
+CouncilAreaGlen Eira City Council          < 2e-16 ***
+CouncilAreaGreater Dandenong City Council 0.000153 ***
+CouncilAreaHobsons Bay City Council       0.148242    
+CouncilAreaHume City Council              0.478054    
+CouncilAreaKingston City Council          3.32e-15 ***
+CouncilAreaKnox City Council              0.825257    
+CouncilAreaMacedon Ranges Shire Council   0.000591 ***
+CouncilAreaManningham City Council        0.000255 ***
+CouncilAreaMaribyrnong City Council       0.168597    
+CouncilAreaMaroondah City Council         0.000715 ***
+CouncilAreaMelbourne City Council         4.53e-16 ***
+CouncilAreaMelton City Council            2.51e-06 ***
+CouncilAreaMitchell Shire Council         0.058672 .  
+CouncilAreaMonash City Council             < 2e-16 ***
+CouncilAreaMoonee Valley City Council     0.110837    
+CouncilAreaMoorabool Shire Council        0.925070    
+CouncilAreaMoreland City Council          3.51e-05 ***
+CouncilAreaNillumbik Shire Council        0.004473 ** 
+CouncilAreaPort Phillip City Council       < 2e-16 ***
+CouncilAreaStonnington City Council        < 2e-16 ***
+CouncilAreaWhitehorse City Council        4.77e-07 ***
+CouncilAreaWhittlesea City Council        0.054565 .  
+CouncilAreaWyndham City Council           1.23e-06 ***
+CouncilAreaYarra City Council              < 2e-16 ***
+CouncilAreaYarra Ranges Shire Council     0.004469 ** 
+RegionnameEastern Victoria                0.318362    
+RegionnameNorthern Metropolitan            < 2e-16 ***
+RegionnameNorthern Victoria               0.001952 ** 
+RegionnameSouth-Eastern Metropolitan      0.013833 *  
+RegionnameSouthern Metropolitan           3.47e-06 ***
+RegionnameWestern Metropolitan            0.001489 ** 
+RegionnameWestern Victoria                0.000285 ***
+BuildingAreaRatio                          < 2e-16 ***
+AVGprice                                  0.000318 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 Residual standard error: 0.306 on 9984 degrees of freedom
 Multiple R-squared:  0.7561,    Adjusted R-squared:  0.7548 
-F-statistic: 583.9 on 53 and 9984 DF,  p-value: < 0.00000000000000022
+F-statistic: 583.9 on 53 and 9984 DF,  p-value: < 2.2e-16
 ```
 
 ![](Code_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->![](Code_files/figure-gfm/unnamed-chunk-19-2.png)<!-- -->![](Code_files/figure-gfm/unnamed-chunk-19-3.png)<!-- -->
@@ -501,132 +501,228 @@ obvious.
 Call:
 lm(formula = log_Price ~ Rooms + Type + Method + Distance + Bathroom + 
     Car + BuildingArea + YearBuilt + CouncilArea + Regionname + 
-    Propertycount + AVGprice, data = house)
+    Propertycount + AVGprice + Landsize, data = house)
 
 Residuals:
      Min       1Q   Median       3Q      Max 
--1.34223 -0.13174  0.00243  0.13559  1.00719 
+-1.34001 -0.13137  0.00204  0.13512  1.01018 
 
 Coefficients:
-                                              Estimate   Std. Error
-(Intercept)                                3.916736694  0.159108424
-Rooms                                      0.093788231  0.003868198
-Typetownhouse                             -0.141194760  0.008945118
-Typeunit                                  -0.446905740  0.008064286
-MethodS                                    0.082443117  0.006970691
-MethodSA                                   0.034304409  0.028009971
-MethodSP                                   0.056286178  0.008647514
-MethodVB                                   0.003204652  0.009545194
-Distance                                  -0.028844425  0.000888039
-Bathroom                                   0.056006800  0.004537910
-Car                                        0.024417719  0.002589588
-BuildingArea                               0.002082159  0.000047005
-YearBuilt                                 -0.002148918  0.000080651
-CouncilAreaBayside City Council            0.491145590  0.021719912
-CouncilAreaBoroondara City Council         0.380456146  0.020008419
-CouncilAreaBrimbank City Council          -0.224512350  0.029460957
-CouncilAreaCardinia Shire Council          0.333111355  0.079786504
-CouncilAreaCasey City Council              0.176660874  0.041465888
-CouncilAreaDarebin City Council            0.093585399  0.017811125
-CouncilAreaFrankston City Council          0.382511109  0.038027558
-CouncilAreaGlen Eira City Council          0.288697049  0.020663866
-CouncilAreaGreater Dandenong City Council  0.116718956  0.037618912
-CouncilAreaHobsons Bay City Council        0.022653058  0.031435747
-CouncilAreaHume City Council              -0.149801231  0.019386638
-CouncilAreaKingston City Council           0.292786400  0.027336781
-CouncilAreaKnox City Council               0.043313162  0.024165797
-CouncilAreaMacedon Ranges Shire Council    0.507524971  0.074271460
-CouncilAreaManningham City Council         0.141973957  0.017016952
-CouncilAreaMaribyrnong City Council       -0.111601398  0.031060453
-CouncilAreaMaroondah City Council          0.137361222  0.023260404
-CouncilAreaMelbourne City Council          0.181343044  0.019346291
-CouncilAreaMelton City Council            -0.317208357  0.037700908
-CouncilAreaMitchell Shire Council          0.117853301  0.101165717
-CouncilAreaMonash City Council             0.256388439  0.019013704
-CouncilAreaMoonee Valley City Council      0.046819043  0.030560904
-CouncilAreaMoorabool Shire Council        -0.117278776  0.223555028
-CouncilAreaMoreland City Council           0.044850843  0.018142728
-CouncilAreaNillumbik Shire Council        -0.085925163  0.054076955
-CouncilAreaPort Phillip City Council       0.225403069  0.022861700
-CouncilAreaStonnington City Council        0.364083958  0.023266558
-CouncilAreaWhitehorse City Council         0.181917738  0.021338155
-CouncilAreaWhittlesea City Council        -0.040689047  0.020995725
-CouncilAreaWyndham City Council           -0.343452589  0.030923409
-CouncilAreaYarra City Council              0.229251362  0.021431789
-CouncilAreaYarra Ranges Shire Council      0.166274095  0.063197972
-RegionnameEastern Victoria                -0.022145010  0.047445237
-RegionnameNorthern Metropolitan           -0.197851151  0.017316487
-RegionnameNorthern Victoria                0.021818286  0.049626415
-RegionnameSouth-Eastern Metropolitan      -0.071076957  0.025388575
-RegionnameSouthern Metropolitan           -0.100414703  0.017992342
-RegionnameWestern Metropolitan            -0.096082718  0.028946895
-RegionnameWestern Victoria                 0.026129059  0.051505178
-Propertycount                              0.000042703  0.000022450
-AVGprice                                  -0.000022195  0.000003813
-                                          t value             Pr(>|t|)    
-(Intercept)                                24.617 < 0.0000000000000002 ***
-Rooms                                      24.246 < 0.0000000000000002 ***
-Typetownhouse                             -15.785 < 0.0000000000000002 ***
-Typeunit                                  -55.418 < 0.0000000000000002 ***
-MethodS                                    11.827 < 0.0000000000000002 ***
-MethodSA                                    1.225             0.220709    
-MethodSP                                    6.509   0.0000000000793163 ***
-MethodVB                                    0.336             0.737078    
-Distance                                  -32.481 < 0.0000000000000002 ***
-Bathroom                                   12.342 < 0.0000000000000002 ***
-Car                                         9.429 < 0.0000000000000002 ***
-BuildingArea                               44.296 < 0.0000000000000002 ***
-YearBuilt                                 -26.645 < 0.0000000000000002 ***
-CouncilAreaBayside City Council            22.613 < 0.0000000000000002 ***
-CouncilAreaBoroondara City Council         19.015 < 0.0000000000000002 ***
-CouncilAreaBrimbank City Council           -7.621   0.0000000000000275 ***
-CouncilAreaCardinia Shire Council           4.175   0.0000300471363128 ***
-CouncilAreaCasey City Council               4.260   0.0000205941909019 ***
-CouncilAreaDarebin City Council             5.254   0.0000001516339797 ***
-CouncilAreaFrankston City Council          10.059 < 0.0000000000000002 ***
-CouncilAreaGlen Eira City Council          13.971 < 0.0000000000000002 ***
-CouncilAreaGreater Dandenong City Council   3.103             0.001923 ** 
-CouncilAreaHobsons Bay City Council         0.721             0.471164    
-CouncilAreaHume City Council               -7.727   0.0000000000000121 ***
-CouncilAreaKingston City Council           10.710 < 0.0000000000000002 ***
-CouncilAreaKnox City Council                1.792             0.073110 .  
-CouncilAreaMacedon Ranges Shire Council     6.833   0.0000000000087780 ***
-CouncilAreaManningham City Council          8.343 < 0.0000000000000002 ***
-CouncilAreaMaribyrnong City Council        -3.593             0.000328 ***
-CouncilAreaMaroondah City Council           5.905   0.0000000036334248 ***
-CouncilAreaMelbourne City Council           9.374 < 0.0000000000000002 ***
-CouncilAreaMelton City Council             -8.414 < 0.0000000000000002 ***
-CouncilAreaMitchell Shire Council           1.165             0.244066    
-CouncilAreaMonash City Council             13.484 < 0.0000000000000002 ***
-CouncilAreaMoonee Valley City Council       1.532             0.125556    
-CouncilAreaMoorabool Shire Council         -0.525             0.599867    
-CouncilAreaMoreland City Council            2.472             0.013448 *  
-CouncilAreaNillumbik Shire Council         -1.589             0.112105    
-CouncilAreaPort Phillip City Council        9.859 < 0.0000000000000002 ***
-CouncilAreaStonnington City Council        15.648 < 0.0000000000000002 ***
-CouncilAreaWhitehorse City Council          8.525 < 0.0000000000000002 ***
-CouncilAreaWhittlesea City Council         -1.938             0.052655 .  
-CouncilAreaWyndham City Council           -11.107 < 0.0000000000000002 ***
-CouncilAreaYarra City Council              10.697 < 0.0000000000000002 ***
-CouncilAreaYarra Ranges Shire Council       2.631             0.008526 ** 
-RegionnameEastern Victoria                 -0.467             0.640690    
-RegionnameNorthern Metropolitan           -11.426 < 0.0000000000000002 ***
-RegionnameNorthern Victoria                 0.440             0.660200    
-RegionnameSouth-Eastern Metropolitan       -2.800             0.005127 ** 
-RegionnameSouthern Metropolitan            -5.581   0.0000000245428510 ***
-RegionnameWestern Metropolitan             -3.319             0.000906 ***
-RegionnameWestern Victoria                  0.507             0.611949    
-Propertycount                               1.902             0.057181 .  
-AVGprice                                   -5.821   0.0000000060380761 ***
+                                            Estimate Std. Error t value
+(Intercept)                                3.925e+00  1.590e-01  24.676
+Rooms                                      9.365e-02  3.866e-03  24.221
+Typetownhouse                             -1.394e-01  8.957e-03 -15.565
+Typeunit                                  -4.478e-01  8.065e-03 -55.527
+MethodS                                    8.246e-02  6.967e-03  11.835
+MethodSA                                   3.120e-02  2.801e-02   1.114
+MethodSP                                   5.659e-02  8.644e-03   6.547
+MethodVB                                   3.478e-03  9.541e-03   0.365
+Distance                                  -2.886e-02  8.876e-04 -32.514
+Bathroom                                   5.597e-02  4.536e-03  12.341
+Car                                        2.383e-02  2.594e-03   9.186
+BuildingArea                               2.079e-03  4.699e-05  44.246
+YearBuilt                                 -2.155e-03  8.063e-05 -26.726
+CouncilAreaBayside City Council            4.920e-01  2.171e-02  22.662
+CouncilAreaBoroondara City Council         3.808e-01  2.000e-02  19.040
+CouncilAreaBrimbank City Council          -2.255e-01  2.945e-02  -7.656
+CouncilAreaCardinia Shire Council          3.342e-01  7.975e-02   4.190
+CouncilAreaCasey City Council              1.776e-01  4.145e-02   4.286
+CouncilAreaDarebin City Council            9.372e-02  1.780e-02   5.265
+CouncilAreaFrankston City Council          3.827e-01  3.801e-02  10.069
+CouncilAreaGlen Eira City Council          2.896e-01  2.066e-02  14.021
+CouncilAreaGreater Dandenong City Council  1.176e-01  3.760e-02   3.129
+CouncilAreaHobsons Bay City Council        2.234e-02  3.142e-02   0.711
+CouncilAreaHume City Council              -1.503e-01  1.938e-02  -7.756
+CouncilAreaKingston City Council           2.937e-01  2.732e-02  10.747
+CouncilAreaKnox City Council               4.352e-02  2.415e-02   1.802
+CouncilAreaMacedon Ranges Shire Council    4.249e-01  7.826e-02   5.430
+CouncilAreaManningham City Council         1.421e-01  1.701e-02   8.355
+CouncilAreaMaribyrnong City Council       -1.132e-01  3.105e-02  -3.646
+CouncilAreaMaroondah City Council          1.374e-01  2.325e-02   5.911
+CouncilAreaMelbourne City Council          1.805e-01  1.934e-02   9.333
+CouncilAreaMelton City Council            -3.176e-01  3.768e-02  -8.429
+CouncilAreaMitchell Shire Council          1.165e-01  1.011e-01   1.152
+CouncilAreaMonash City Council             2.572e-01  1.901e-02  13.532
+CouncilAreaMoonee Valley City Council      4.588e-02  3.055e-02   1.502
+CouncilAreaMoorabool Shire Council        -1.186e-01  2.234e-01  -0.531
+CouncilAreaMoreland City Council           4.469e-02  1.813e-02   2.464
+CouncilAreaNillumbik Shire Council        -8.710e-02  5.405e-02  -1.611
+CouncilAreaPort Phillip City Council       2.261e-01  2.285e-02   9.893
+CouncilAreaStonnington City Council        3.645e-01  2.326e-02  15.675
+CouncilAreaWhitehorse City Council         1.826e-01  2.133e-02   8.561
+CouncilAreaWhittlesea City Council        -4.038e-02  2.099e-02  -1.924
+CouncilAreaWyndham City Council           -3.439e-01  3.091e-02 -11.127
+CouncilAreaYarra City Council              2.272e-01  2.143e-02  10.602
+CouncilAreaYarra Ranges Shire Council      1.659e-01  6.317e-02   2.627
+RegionnameEastern Victoria                -2.353e-02  4.742e-02  -0.496
+RegionnameNorthern Metropolitan           -1.967e-01  1.731e-02 -11.363
+RegionnameNorthern Victoria                2.337e-02  4.960e-02   0.471
+RegionnameSouth-Eastern Metropolitan      -7.095e-02  2.538e-02  -2.796
+RegionnameSouthern Metropolitan           -1.004e-01  1.798e-02  -5.581
+RegionnameWestern Metropolitan            -9.435e-02  2.894e-02  -3.261
+RegionnameWestern Victoria                 2.679e-02  5.148e-02   0.520
+Propertycount                              4.321e-05  2.244e-05   1.926
+AVGprice                                  -2.202e-05  3.811e-06  -5.777
+Landsize                                   7.520e-06  2.256e-06   3.333
+                                          Pr(>|t|)    
+(Intercept)                                < 2e-16 ***
+Rooms                                      < 2e-16 ***
+Typetownhouse                              < 2e-16 ***
+Typeunit                                   < 2e-16 ***
+MethodS                                    < 2e-16 ***
+MethodSA                                  0.265336    
+MethodSP                                  6.15e-11 ***
+MethodVB                                  0.715460    
+Distance                                   < 2e-16 ***
+Bathroom                                   < 2e-16 ***
+Car                                        < 2e-16 ***
+BuildingArea                               < 2e-16 ***
+YearBuilt                                  < 2e-16 ***
+CouncilAreaBayside City Council            < 2e-16 ***
+CouncilAreaBoroondara City Council         < 2e-16 ***
+CouncilAreaBrimbank City Council          2.09e-14 ***
+CouncilAreaCardinia Shire Council         2.81e-05 ***
+CouncilAreaCasey City Council             1.84e-05 ***
+CouncilAreaDarebin City Council           1.43e-07 ***
+CouncilAreaFrankston City Council          < 2e-16 ***
+CouncilAreaGlen Eira City Council          < 2e-16 ***
+CouncilAreaGreater Dandenong City Council 0.001761 ** 
+CouncilAreaHobsons Bay City Council       0.477085    
+CouncilAreaHume City Council              9.66e-15 ***
+CouncilAreaKingston City Council           < 2e-16 ***
+CouncilAreaKnox City Council              0.071600 .  
+CouncilAreaMacedon Ranges Shire Council   5.78e-08 ***
+CouncilAreaManningham City Council         < 2e-16 ***
+CouncilAreaMaribyrnong City Council       0.000268 ***
+CouncilAreaMaroondah City Council         3.50e-09 ***
+CouncilAreaMelbourne City Council          < 2e-16 ***
+CouncilAreaMelton City Council             < 2e-16 ***
+CouncilAreaMitchell Shire Council         0.249363    
+CouncilAreaMonash City Council             < 2e-16 ***
+CouncilAreaMoonee Valley City Council     0.133176    
+CouncilAreaMoorabool Shire Council        0.595592    
+CouncilAreaMoreland City Council          0.013738 *  
+CouncilAreaNillumbik Shire Council        0.107115    
+CouncilAreaPort Phillip City Council       < 2e-16 ***
+CouncilAreaStonnington City Council        < 2e-16 ***
+CouncilAreaWhitehorse City Council         < 2e-16 ***
+CouncilAreaWhittlesea City Council        0.054367 .  
+CouncilAreaWyndham City Council            < 2e-16 ***
+CouncilAreaYarra City Council              < 2e-16 ***
+CouncilAreaYarra Ranges Shire Council     0.008623 ** 
+RegionnameEastern Victoria                0.619745    
+RegionnameNorthern Metropolitan            < 2e-16 ***
+RegionnameNorthern Victoria               0.637548    
+RegionnameSouth-Eastern Metropolitan      0.005183 ** 
+RegionnameSouthern Metropolitan           2.46e-08 ***
+RegionnameWestern Metropolitan            0.001116 ** 
+RegionnameWestern Victoria                0.602781    
+Propertycount                             0.054181 .  
+AVGprice                                  7.83e-09 ***
+Landsize                                  0.000862 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 0.2183 on 9984 degrees of freedom
-Multiple R-squared:  0.8215,    Adjusted R-squared:  0.8206 
-F-statistic: 867.2 on 53 and 9984 DF,  p-value: < 0.00000000000000022
+Residual standard error: 0.2182 on 9983 degrees of freedom
+Multiple R-squared:  0.8217,    Adjusted R-squared:  0.8208 
+F-statistic: 852.2 on 54 and 9983 DF,  p-value: < 2.2e-16
 ```
 
 ![](Code_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->![](Code_files/figure-gfm/unnamed-chunk-21-2.png)<!-- -->![](Code_files/figure-gfm/unnamed-chunk-21-3.png)<!-- -->
+
+### Algorithm evaluation and selection
+
+The next step is applyting different model to this dataset to see which
+model has the best performance. To achieve this, we will use 4 folder
+cross validation method and repeat this process 10 times on each model
+so we can get the 40 prediction accuracy results for each model to find
+out which model has the best accuracy. Let’s start with the linear
+model.
+
+#### Linear Model
+
+![](Code_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
+
+#### Decision Tree
+
+I appled simple decision tree model to the dataset and tuned the
+parameter mincriterion, maxdepth to find the combination achieving the
+best performance.The combination of these two parameter is how the trees
+are pruned. I found that when maxdepth is 0 and mincriterion is 0.1,
+simple decision tree model has the best performance. Below shows the
+RMSEs of the trees when maxdepth is 0 and mincriterion varied from 0.1
+to 1. We can see that when mincriterion is 0.1, RMSE is the smallest.
+![](./map/treeP.png) Below is the evaluation of tree model and its
+comparison with the linear model
+
+![](Code_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
+
+``` 
+
+    Welch Two Sample t-test
+
+data:  mev_linear$RMSE and mev_tree$RMSE
+t = -1.9584, df = 77.992, p-value = 0.05376
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -0.00279894789  0.00002300974
+sample estimates:
+mean of x mean of y 
+0.2189465 0.2203344 
+```
+
+    [1] "Mean RMSE of linear model is 0.218946461711669"
+
+    [1] "Mean RMSE of tree model is 0.220334430786199"
+
+![](Code_files/figure-gfm/unnamed-chunk-24-2.png)<!-- -->
+
+From the t.test and distribution plot above we can find that there is no
+signifcant difference between Decision Tree and Linear Regression.
+
+#### Random Forest
+
+I applied random forest to the model. For parameter tuning, I tested 500
+trees with number of variable as 3, 7, 11. After 1 hour of testing
+running, when the number of variable is 11, model has the minimum RMSE.
+Below is the result of the parameter tuning.
+
+![](./map/RandomForest.png)
+
+I compared the RMSE distribution of random forest with decision tree and
+linear regression. We find that random forest signicantly improved the
+model performance however the model building is much more time
+consuming.
+
+![](Code_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
+
+    [1] "Mean RMSE of Random Forest model is 0.171436928753215"
+
+![](Code_files/figure-gfm/unnamed-chunk-26-2.png)<!-- -->
+
+#### Ridge, Lasso, Elastic Regression
+
+I built the Ridge, Lasso and Elastic Regression regression using ‘Caret’
+package. Tuning the paramter alpha and lambda to find the best parameter
+combination. When alpha is 0, the model is ridge regression. When alpha
+is 1, the model is lasso regression. When alpha is between 0 and 1, the
+model is Elastic regression. Below shows the RMSE for different alpha
+and lambda combination. We can see that when alpha=0 and lambda=0.1, the
+model performs best.
+
+![](./map/Elastic1.png)
+
+I want to see if lambda is continuely lowered, the performance could be
+improved. Below is the result. Keeping alpha 0, lambda= 0.01 is still
+the best model.
+
+![](./map/Elastic2.png)
+
+![](Code_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
+
+    [1] "Mean RMSE of Ridge Regression model is 0.221478743721946"
+
+![](Code_files/figure-gfm/unnamed-chunk-28-2.png)<!-- -->
 
 ## Reference
 

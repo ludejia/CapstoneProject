@@ -6,7 +6,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo=FALSE, comment=NA, message=FALSE,warning = FALSE)
+knitr::opts_chunk$set(echo=FALSE, comment=NA, message=FALSE,warning = FALSE,cache=TRUE)
 ```
 
 # CKME 136 Capstone Project 
@@ -45,6 +45,15 @@ library(ggmap)
 library(visdat)
 library(gridExtra)
 library(MASS)
+library(lubridate)
+library(ggcorrplot)
+library(caret)
+library(randomForest)
+library(caret)
+library(glmnet)
+library(mlbench)
+library(psych)
+
 theme_set(theme_bw())
 options(scipen=999)
 house=read.csv('data/Melbourne_housing_FULL.csv')
@@ -219,7 +228,7 @@ house$Type=as.factor(house$Type)
 ggplot(house)+geom_bar(aes(x=house$Type),fill='grey',width = 0.3,col='black')+
         labs(x='house type')
 ggplot(house)+geom_density(aes(house$Price,fill=house$Type),alpha=0.4)+
-        labs(x='price')
+        labs(x='price')+theme(legend.title = element_blank())
 
 ```
 
@@ -312,7 +321,7 @@ house[house$YearBuilt<1800,]$YearBuilt=1970
 
 
 ```{r}
-library(lubridate)
+
 df_num=data.frame(table(house$Date))
 colnames(df_num)=c('Date','count')
 df_num$Date=dmy(df_num$Date)
@@ -422,7 +431,7 @@ Below is the correlation graph of all the numeric variables and we can find that
 
 
 ```{r}
-library(ggcorrplot)
+
 house_numeric=house
 house_numeric=house_numeric[,-which(names(house_numeric)=='Type')]
 house_numeric=house_numeric[,-which(names(house_numeric)=='Method')]
@@ -531,7 +540,130 @@ house=house[,-which(names(house)=='BuildingAreaRatio')]
 
 ### Algorithm evaluation and selection
 
+The next step is applyting different model to this dataset to see which model has the best performance. To achieve this, we will use 4 folder cross validation method and repeat this process 10 times on each model so we can get the 40 prediction accuracy results for each model to find out which model has the best accuracy. Let's start with the linear model.
 
+#### Linear Model
+
+```{r}
+
+set.seed(666)
+custom <- trainControl(method = "repeatedcv",
+                       number = 4,
+                       repeats= 10,
+                       verboseIter = F)
+
+eva_linear <- train(log_Price ~., data = house,
+            method='lm',
+            trControl=custom)
+
+mev_linear=data.frame(eva_linear$resample)
+mev_linear$type='Linear Regression'
+mev_linear=mev_linear[,-which(names(mev_linear)=='Rsquared')]
+
+ggplot(mev_linear)+geom_histogram(aes(x=mev_linear$RMSE),
+                             binwidth = 0.0025, fill='grey', col='black')
+
+```
+
+#### Decision Tree
+I appled simple decision tree model to the dataset and tuned the parameter mincriterion, maxdepth to find the combination achieving the best performance.The combination of these two parameter is how the trees are pruned.
+I found that when maxdepth is 0 and mincriterion is 0.1, simple decision tree model has the best performance.
+Below shows the RMSEs of the trees when maxdepth is 0 and mincriterion varied from 0.1 to 1. We can see that when mincriterion is 0.1, RMSE is the smallest.
+![](./map/treeP.png)
+Below is the evaluation of tree model and its comparison with the linear model
+```{R, cache = TRUE}
+eva_tree <- train(log_Price ~., data = house,
+                    method='ctree2',
+                    tuneGrid=expand.grid(mincriterion =c(0.1),
+                                         maxdepth=0),
+                    trControl=custom)
+```
+
+```{r}
+mev_tree = data.frame(eva_tree$resample)
+mev_tree$type='Decision Tree'
+mev_tree=mev_tree[,-which(names(mev_tree)=='Rsquared')]
+
+ggplot(mev_tree)+geom_histogram(aes(x=mev_tree$RMSE),
+                                  binwidth = 0.0025, fill='grey', col='black')
+
+t.test(mev_linear$RMSE,mev_tree$RMSE)
+print(paste0("Mean RMSE of linear model is ", mean(mev_linear$RMSE)))
+print(paste0("Mean RMSE of tree model is ", mean(mev_tree$RMSE)))
+mev_all=rbind(mev_linear,mev_tree)
+ggplot(mev_all)+geom_density(aes(mev_all$RMSE,fill=mev_all$type),alpha=0.4)+
+  labs(x='RMSE', y='Density')+
+  theme(legend.title = element_blank())
+```
+
+From the t.test and distribution plot above we can find that there is no signifcant difference between Decision Tree and Linear Regression. 
+
+
+#### Random Forest
+
+
+I applied random forest to the model. For parameter tuning, I tested 500 trees with number of variable as 3, 7, 11. After 1 hour of testing running, when the number of variable is 11, model has the minimum RMSE. Below is the result of the parameter tuning.
+
+![](./map/RandomForest.png)
+
+I compared the RMSE distribution of random forest with decision tree and linear regression. We find that random forest signicantly improved the model performance however the model building is much more time consuming.
+```{r}
+eva_Forest <- train(log_Price ~., data = house,
+                  method='rf',
+                  tuneGrid=expand.grid(mtry =c(11)),
+                  trControl=custom)
+```
+
+```{r}
+mev_Forest = data.frame(eva_Forest$resample)
+mev_Forest$type='Random Forest'
+mev_Forest=mev_Forest[,-which(names(mev_Forest)=='Rsquared')]
+
+ggplot(mev_Forest)+geom_histogram(aes(x=mev_Forest$RMSE),
+                                binwidth = 0.0025, fill='grey', col='black')
+
+print(paste0("Mean RMSE of Random Forest model is ", mean(mev_Forest$RMSE)))
+mev_all=rbind(mev_all,mev_Forest)
+ggplot(mev_all)+geom_density(aes(mev_all$RMSE,fill=mev_all$type),alpha=0.4)+
+        theme(legend.title = element_blank())+
+  labs(x='RMSE')
+  
+```
+
+#### Ridge, Lasso, Elastic Regression
+
+I built the Ridge, Lasso and Elastic Regression regression using 'Caret' package. Tuning the paramter alpha and lambda to find the best parameter combination. When alpha is 0, the model is ridge regression. When alpha is 1, the model is lasso regression. When alpha is between 0 and 1, the model is Elastic regression. Below shows the RMSE for different alpha and lambda combination. We can see that when alpha=0 and lambda=0.1, the model performs best.
+
+![](./map/Elastic1.png)
+
+I want to see if lambda is continuely lowered, the performance could be improved. Below is the result. Keeping alpha 0, lambda= 0.01 is still the best model.
+
+![](./map/Elastic2.png)
+
+
+```{r}
+eva_ElasticNet <- train(log_Price ~., data = house,
+                        method='glmnet',
+                        tuneGrid=expand.grid(alpha=0,
+                                             lambda=0.01),
+                        trControl=custom)
+```
+
+```{r}
+mev_ElasticNet = data.frame(eva_ElasticNet$resample)
+mev_ElasticNet$type='Ridge Regression'
+mev_ElasticNet=mev_ElasticNet[,-which(names(mev_ElasticNet)=='Rsquared')]
+
+ggplot(mev_ElasticNet)+geom_histogram(aes(x=mev_ElasticNet$RMSE),
+                                  binwidth = 0.0025, fill='grey', col='black')
+
+print(paste0("Mean RMSE of Ridge Regression model is ", mean(mev_ElasticNet$RMSE)))
+mev_all=rbind(mev_all,mev_ElasticNet)
+ggplot(mev_all)+geom_density(aes(mev_all$RMSE,fill=mev_all$type),alpha=0.4)+
+        theme(legend.title = element_blank())+
+  labs(x='RMSE')
+
+```
 
 
 ## Reference
