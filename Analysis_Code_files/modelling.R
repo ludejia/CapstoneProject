@@ -492,10 +492,23 @@ ggplot(mev_XGBoost)+geom_histogram(aes(x=mev_XGBoost$RMSE),
 
 print(paste0("Mean RMSE of Ridge Regression model is ", mean(mev_XGBoost$RMSE)))
 mev_all=rbind(mev_all,mev_XGBoost)
-ggplot(mev_all)+geom_density(aes(mev_all$RMSE,fill=mev_all$type),alpha=0.4)+
+str(mev_all)
+
+ggplot(mev_all)+geom_boxplot(aes(mev_all$type,mev_all$RMSE, fill=mev_all$type))+
         theme(legend.title = element_blank())+
-        labs(x='RMSE')
+        labs(x='',y='RMSE')+
+        theme(axis.text.x=element_blank())
+
 
 ?t.test
 
+str(house)
 
+vis_miss(house)
+
+null=lm(log_Price~1,data=house)
+full=lm(log_Price~.,data=house)
+stepAIC(null, scope=list(lower=null, upper=full), direction= "forward", trace=TRUE)
+stepAIC(full, direction= "backward", trace=TRUE)
+stepAIC(null, scope=list(lower=null, upper=full), direction= "both", trace=TRUE)
+stepAIC(full, direction= "both", trace=TRUE)
