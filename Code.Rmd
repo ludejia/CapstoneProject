@@ -34,34 +34,31 @@ The dataset provides GPS location information for each house. It would be especi
 
 In terms of feature selection and model building, An introduction to statistical learning: With applications in R (James et al. 2013) has a comprehensive coverage on all the popular algorithms and their mathematical explanations. For each algorithm, it has multiple lab exercise in R environment dedicated to it so you can apply the theory to real dataset. In the section of linear model selection, it provides multiple ways to select the best features of the dataset. I learned Ridge Regression, Lasso Regression, Random Forest and Support Vector Machine and their application in this book.  The elements of statistical learning: Data mining, inference, and prediction (Hastie et al., 2009) gives an in-depth math and statistical concepts on modelling and model evaluations. Due to its missing of application in R environment, I used this book as a supplement reading to the previous modelling book for the concepts that I am not so clear about.
 
+
 ## 3. Approach
 
 ![](./map/approach.png)
 
 ### Step 1: Exploratory Data Analysis
 
-Explore and visualize each attribute to understand its characteristics
+Explore and visualize each attribute to understand data and the relationship between dependent variable and independent variables
 
 ### Step 2: Data Tranformation
 
-### Step 2: Model Building & Tuning
+Perform data cleaning, manipulation and feature engineering to find or create the best the relevant features to feed into the modeling process
 
-Build models using various algorithms; Fine tuning parameters to achieve best performance for each algorithm; Adjust features if needed;
+### Step 3: Model Building & Evaluation
 
-#### Step 3: Model Evaluation
-
-Perform cross-validation to compare performance across different models and decide on the final model.
-
+Build models using various algorithms; Fine tune parameters to achieve the best performance for each algorithm; Perform cross-validation to compare performances across different models and decide on the final model
 
 ## 4. Data
 
 ### 4.1 Data Overview 
 
-
-The dataset I am using was posted on Kaggle and scraped by the contributor Pino (2018) from an Australian property website (Domain.com.au) for the period from 2016 to 2018. The data set contains the property information of 34857 observations. Each observation has 21 attributes. Here is the meaning of all the attributes.
+The dataset I use was posted on Kaggle and scraped by the contributor Pino (2018) from an Australian property website (Domain.com.au) for the period from 2016 to 2018. The data set contains the property information of 34857 observations. Each observation has 21 attributes. Here is the meaning of all the attributes.
 
 ![](./map/attribute.png)
-Price is the attribute I am building models to predict. The following chart provides the summary for the attribute names and visualization of missing values percentage we can find that building area has the highest missing value percentage.
+Price is the attribute I am building models to predict. The following chart provides the summary for the missing values percentages of all the attributes, we can find that BuildingArea has the highest missing value percentage.
 
 ```{r}
 library(ggplot2)
@@ -93,7 +90,7 @@ ggplot(missing)+geom_bar(aes(x=reorder(var, missing),y=missing),
 vis_miss(house)
 ```
 
-Below we can visualize the location of the properties Melbourne using GPS location in. 23% of the data don’t have GPS information. Each red spot represents a property.
+Below we can visualize the locations of the properties in Melbourne using GPS location information. 23% of the data don’t have GPS information. Each red spot represents a property.
 
 ```{r}
 register_google(key = "AIzaSyCyjfy52N-yvo76okcOhh4sc1wSqSMi8oI", write = TRUE)
@@ -103,16 +100,13 @@ ggmap(map)+geom_point(data = house, aes(x = house$Longtitude, y = house$Lattitud
 
 ```
 
-
 ### 4.2 Data Transformation
 
 #### 4.2.1 Price & PriceSQM & Log_Price
 
-"Price" is the sold price in Australian dollar for the property. I replace the unit of price to million Australian dollars. I created a feature "PriceSQM" to represent price per square meter as it's also the common measure of property value and easier to understand its interaction with the features. I removed the data points having missing value in price and building area, and removed the outliers on PriceSQM using boxplot. After the cleaning, total number of observations reduces to 10057. Below shows the missing value after cleaning and price per square meter distribution. 
+Price is the sold price in Australian dollar for the property. I replaced the unit of price to million Australian dollars. I created a feature PriceSQM to represent price per square meter as it's also the common measure of property value and easier to understand its interaction with other features. I removed the data points having missing value in Price and BuildingArea, and removed the outliers on PriceSQM based on boxplot. After the cleaning, total number of observations reduces to 10057. I removed the outliers by discarding the data with price per square meter less than 2000 and over 15000 based on reasonable price range in Melbourne.
 
-I removed the outliers by discarding the data with price per square meter less than 2000 and over 15000 based on reasonable price range in Melbourne.
-
-After the data cleaning, as we can see below, missing values are significantly reduced
+After the data cleaning, as we can see below, missing values are significantly reduced.
 
 ```{r}
 #remove missing values
@@ -125,14 +119,16 @@ house=house[house$PriceSQM<15000 & house$PriceSQM>2000,]
 house$Price=house$Price/1000000
 vis_miss(house)
 ```
-The chart below is the distribution of the price, we can see the distribution of the price. 
+
+The chart below is the distribution of the price we are trying to predict.  
 
 ```{r}
 ggplot(house)+geom_histogram(aes(x=house$Price),
                  binwidth = 0.1, fill='grey', col='black')+
         labs(x='House sold price (million)')
 ```
-Because it is not normally distributed and will negatively impact the modeling, I applied log transformation to transform price to log(price). Below shows log(price) is normally distributed.
+
+Because it is not normally distributed and will negatively impact the linear modeling, I applied log transformation to transform Price to log_Price. Below shows log_Price which is normally distributed.
 
 ```{r}
 house$log_Price=log(house$Price)
@@ -140,19 +136,17 @@ ggplot(house)+geom_histogram(aes(x=house$log_Price), fill='grey', col='black')+
         labs(x='House sold log_Price')
 ```
 
-
 #### 4.2.2 BuildingArea, Landsize, BuildingAreaRatio
 
 Landsize is the size of the land the property occupies. BuildingArea is the floor square meters of the house, town house or unit. For unit or townhouse, Land size could be very big but the building area might be small as the land are shared by many units or townhouses. 
 
-For house type, I removed the data having building areas less than 40 square meters.
+For house, I removed the data having building areas less than 40 square meters.
 
-For Landsize, there are missing values, zero, unreasonable large land size and land size that are smaller than building area. I replaced these erroneous values with the median land size of different house types.
+For Landsize, there are missing values, zero, unreasonable large land size and land size that are smaller than building area. I replaced these erroneous values with the median land size of different property types.
 
 I created a new feature BuildingAreaRatio which is BuildingArea / Landsize. Because for unit and townhouse, multiple properties share one common land space, building Area ratio reflects the interaction between land size and building type.
 
-Below charts show the distributions of land size and building area.
-
+Below charts show the distributions of land size and building area after the data transformation.
 
 ```{r}
 house=house[!(house$BuildingArea<40 & house$Type=='h'),]
@@ -174,15 +168,14 @@ grid.arrange(plot1, plot2, ncol=2)
 
 ```
 
-
-
-
 #### 4.2.3 Suburb, Postcode, Regionname, CouncilArea
 
-Suburb, Postcode, Regionname, CouncilArea divide Melbourne into different sections.
+Suburb, Postcode, Regionname, CouncilArea divide Melbourne into different geographical areas in different ways as below.
+
 ![](./map/map.png)
 
-Below we can find Suburb has the finest divisions (351) whereas Regionname only has 9 divisions. In my model, I will only use CouncilArea, Regionname as geographical area feature.
+We can find Suburb has the finest divisions (351) whereas Regionname only has 9 divisions. In my model, I will only use CouncilArea, Regionname as geographical area features.
+
 ```{r}
 house$CouncilArea=as.character(house$CouncilArea)
 house$CouncilArea=as.factor(house$CouncilArea)
@@ -204,8 +197,7 @@ ggplot(Division)+geom_bar(aes(x=reorder(a, b),y=b),
 
 ```
 
-
-Below is the price per square meter distribution for different regions. Quite obvious, southern metropolitan is more expensive. The red the points on the map are these properties in Southern Metropolitan.
+Below is the price per square meter distribution for different regions. As we can see, southern metropolitan is more expensive than other regions. 
 
 ```{r}
 ggplot(house)+geom_density(aes(PriceSQM,fill=house$Regionname),alpha=0.4)+
@@ -215,7 +207,7 @@ ggplot(house)+geom_density(aes(PriceSQM,fill=house$Regionname),alpha=0.4)+
 
 #### 4.2.4 Propertycount
 
-Propertycount is the total number of properties in the suburb where the property is located. We most suburbs have less than 50 properties. I converted the data format from categorial to numeric.
+Propertycount is the total number of properties in the suburb where the property is located. We can see most suburbs have less than 50 properties. I converted its data class from categorial to numeric.
 
 ```{r}
 df_pcount=data.frame(table(house$Propertycount,useNA = 'always'))
@@ -228,10 +220,7 @@ house$Propertycount=as.numeric(house$Propertycount)
 
 #### 4.2.5 Type
 
-There are three types of houses."House" reprents house,cottage,villa, semi,terrace."Unit" reprents apartment, condo, duplex.
-"Townhouse" repsents townhouse only. I converted its data class to factor.
-
-Below sold price distribution for each type.
+There are three types of houses. "House" represents house, cottage, villa, semi-attached, terrace. "Unit" represents apartment, condo, duplex. "Townhouse" represents townhouse only. I converted its data class to factor. Below is the log_Price distributions of each type.
 
 ```{r}
 house$Type=as.character(house$Type)
@@ -245,14 +234,13 @@ house$Type=as.factor(house$Type)
 ggplot(house)+geom_bar(aes(x=house$Type),fill='grey',width = 0.3,col='black')+
         labs(x='house type')
 ggplot(house)+geom_density(aes(house$Price,fill=house$Type),alpha=0.4)+
-        labs(x='price')+theme(legend.title = element_blank())
+        labs(x='log_Price')+theme(legend.title = element_blank())
 
 ```
 
+#### 4.2.6 Rooms, Bedroom2
 
-#### 4.2.6 Rooms, bedroom2
-
-Rooms and Bedroom2 are very similar, which is the number of bedrooms in the property. Rooms has no missing value and bedroom2 has 23% percent missing value and is scraped by the contributor from different sources.
+Rooms and Bedroom2 are the numbers of bedrooms but from different sources. Rooms has no missing value. bedroom2 has 23% percent missing value and is from other sources. Below is the distribution of Rooms.
 
 ```{r}
 ggplot(house)+geom_bar(aes(x=house$Rooms), fill='grey',col='black')+
@@ -263,8 +251,8 @@ ggplot(house)+geom_bar(aes(x=house$Rooms), fill='grey',col='black')+
 ```        
 
 #### 4.2.7 Car
-Car is the number of parking spots each property has. The bar chart shows the distribution. Car has 1.67% missing values. I imputed the missing value using median.
 
+Car is the number of parking spots each property has. The bar chart shows its distribution. Car has 1.67% missing values. I imputed the missing value using median value.
 
 ```{r}
 house[is.na(house$Car),]$Car=median(house$Car,na.rm=T)
@@ -282,8 +270,7 @@ ggplot(house)+geom_histogram(aes(x=house$Car),
 
 #### 4.2.8 Distance
 
-Distance is the distance in km from the property to the center business district. I converted its data type to numeric.
-
+Distance is the distance in km from the property to the business center district. I converted its data type to numeric.
 
 ```{r}
 house$Distance=as.character(house$Distance)
@@ -297,14 +284,13 @@ ggplot(house)+geom_histogram(aes(x=house$Distance),
 ```
 
 #### 4.2.9 YearBuilt
-The year the property is built. I replace missing values and one data built before 1880 with median value. Below is the distribution chart for houses built in different period.
 
+YearBuilt is the year the property was built. I replaced missing values and one property built before 1880 with median YearBuilt value. Below is the distribution chart for houses built in different periods.
 
 ```{r}
 house[is.na(house$YearBuilt),]$YearBuilt=median(house$YearBuilt,na.rm=T)
 house[house$YearBuilt<1800,]$YearBuilt=1970
 ```
-
 
 ```{r}
 df_year=as.data.frame(table(house$YearBuilt))
@@ -325,7 +311,7 @@ ggplot(df_year)+geom_bar(aes(x=df_year$year50, y=df_year$count),
 
 #### 4.2.10 Date & AVGmonth_price
 
-Date is the date the property was sold. The plots show monthly trends of the total number of properties sold and average sold price per square meter. 
+Date is the date the property was sold. The plots show monthly trends of the total number of properties sold and average sold price per square meter for the period. 
 
 ```{r}
 
@@ -357,7 +343,8 @@ pd2= ggplot(df_avghouseprice)+geom_line(aes(x=df_avghouseprice$Date,y=df_avghous
         labs(title='Average sold price per square meter',x='date', y='average sold price per square meter')
 grid.arrange(pd1, pd2, ncol=2)
 ```
-Instead of using the date as a time feature, we would use monthly price per square meter as a variable which reflects market seasonal fluctuation due to the change in demand and supply. There are only 16 data points for the first month these data points of the first month are removed.
+
+Instead of using the date as a time series feature, I use monthly price per square meter AVGmonth_price as a variable to reflect market seasonal fluctuation due to the change in demand and supply. There are only 16 data points for the first month so these data points are removed.
 
 ```{r}
 house$Date=dmy(house$Date)
@@ -366,15 +353,15 @@ house=house[!(house$Date=='2016-02-01'),]
 house$AVGprice=df_avghouseprice[match(house$Date,df_avghouseprice$Date),2]
 ```
 
-
 #### 4.2.11 Method
 
-Method reflects how the house was sold. Below are the meanings of different method and the distribution chart.
+Method is how the house was sold. Below are the meanings of different methods and the distribution chart.
 PI - property passed in; 
 S - sold not disclosed; 
 SA - sold after auction; 
 SP - property sold prior; 
 VB - vendor bid
+
 ```{r}
 house$Method=as.character(house$Method)
 house$Method=as.factor(house$Method)
@@ -390,9 +377,11 @@ ggplot(house)+geom_bar(aes(x=house$Method), fill='grey', col='black',
 
 ### 4.3 Feature selection 
 
-The following feature would be removed because either better features has been engineered so they become redundant or they are irrelevant to the prediction.  
+The following features are removed because either better features has been engineered so they become redundant or they are irrelevant to the prediction.  log_Price is the value I am predicting.
 
 Removed features: Date, SellerG, Suburb, Address, Postcode, Bedroom2, Lattitude, Longtitude, PriceSQM, Price
+
+Below is the correlation matrix of all the numeric variables. The top three correlated variables to log_Price are BuildingArea, Number of Rooms, Number of Bathroom.
 
 ```{r}
 #remove the variables that I don't use
@@ -407,7 +396,6 @@ house=house[,-which(names(house)=='Longtitude')]
 house=house[,-which(names(house)=='PriceSQM')]
 house=house[,-which(names(house)=='Price')]
 ```
-
 
 ```{r}
 house_numeric=house
@@ -431,7 +419,7 @@ ggcorrplot(corr, hc.order = TRUE,
 
 ```
 
-We implemented forward, backward, forward stepwise and backward stepwise for the best feature, which all select the same features except for BuildingAreaRatio. We exclude BuildingAreaRatio in our final dataset.
+I implemented forward, backward, forward stepwise and backward stepwise feature selection methods as below for the best features, which all select the same features except for BuildingAreaRatio. We exclude BuildingAreaRatio in our final dataset.
 
 ```{r, eval=F, echo=T}
 null=lm(log_Price~1,data=house)
@@ -445,17 +433,18 @@ stepAIC(full, direction= "both", trace=TRUE)
 ```{r}
 house=house[,-which(names(house)=='BuildingAreaRatio')]
 ```
-The final dataset for modelling has 14 variables, 10038 observations. There is no missing values in the dataset.
+
+The final dataset for modelling has 14 variables and 10038 observations. There is no missing value in the dataset.
+
 ```{r}
 vis_miss(house)
 ```
 
+## 5. Modelling & Evaluation
 
-##5. Modelling & Evaluation
+### 5.1 Linear model
 
-### 5.1 linear model
-
-Below is the details of the linear model. Adjusted R squared of 0.8208 with close to 0 p-value. log_Pice is the dependent variable and the rest variables are regressors.
+I applied the lm function in R to build the linear model. Below are the details of the model. Model’s adjusted R squared is 0.8208 with p-value close to 0. log_Pice is the dependent variable and the rest variables are regressors.
 
 ```{r}
 model_linear=lm(formula = log_Price ~., data = house)
@@ -464,6 +453,7 @@ residual=data.frame(residual=model_linear$residuals, prediction=model_linear$fit
 pred=data.frame(price=model_linear$model$log_Price, prediction=model_linear$fitted.values)
 ```
 
+From the plots below, we can find the residuals are normally distributed and there is no obvious heteroscedasticity in the residual and prediction relationship. The plot of predictions and actual prices is a roughly a 45-degree line. I can conclude that the linear model performs pretty well.
 
 ```{r}
 ggplot(residual)+geom_histogram(aes(x=residual),
@@ -487,7 +477,7 @@ ggplot(residual)+geom_point(aes(x=prediction,y=residual), color='purple', alpha=
 
 #### Model Evaluation:
 
-I use the package caret for 4-fold cross validation with 10 repeats so I can get a sample of 40 test-set results of RMSE. Below is the Boxplot of these 40 RMSE test-set results with a mean of 0.2189.
+I use the train function in package “caret” and choose 4-fold cross validation with 10 repeats so I can get a sample of 40 test-set results of RMSE. Below is the Boxplot of these 40 RMSE test-set results with a mean of 0.2189 for Linear Regression.
 
 ```{r}
 set.seed(666)
@@ -514,11 +504,12 @@ print(paste0("Mean RMSE of linear model is ", mean(mev_linear$RMSE)))
 ```
 
 ### 5.2 Decision Tree
-I appled simple decision tree model to the dataset and tuned the parameter mincriterion, maxdepth to find the combination achieving the best performance.The combination of these two parameter is how the trees are pruned.
-I found that when maxdepth is 0 and mincriterion is 0.1, simple decision tree model has the best performance.
-Below shows the RMSEs of the trees when maxdepth is 0 and mincriterion varied from 0.1 to 1. We can see that when mincriterion is 0.1, RMSE is the smallest.
+
+#### Parameter Tuning:
+I use the train function in package “caret” with “ctree2” method and choose 4-fold cross validation with 10 repeats to tune the best parameters in order to minimize the mean RMSE of the 40 test-set samples. The two parameters I tuned were maxdepth and mincriterion. They decide how the tree is pruned. I tried multiple values for maxdepth and mincriterion. When maxdepth is 0 which means there is no limit for the depth of branch, and mincriterion (p-vlaue in chart below) changes from 1 to 0.1, RMSE are lowered (Chart below). For the final model of decision tree, I chose maxdepth = 0 and mincriterion= 0.1.
+
 ![](./map/treeP.png)
-Below is the evaluation of tree model and its comparison with the linear model
+
 ```{R, cache = TRUE}
 eva_tree <- train(log_Price ~., data = house,
                     method='ctree2',
@@ -527,36 +518,42 @@ eva_tree <- train(log_Price ~., data = house,
                     trControl=custom)
 ```
 
+#### Model Evaluation:
+Same as liner model, below is the boxplot of 40 RMSE test-set results of decision tree in comparison with linear regression.
+
 ```{r}
 mev_tree = data.frame(eva_tree$resample)
 mev_tree$type='Decision Tree'
 mev_tree=mev_tree[,-which(names(mev_tree)=='Rsquared')]
+print(paste0("Mean RMSE of Decision Tree model is ", mean(mev_tree$RMSE)))
+```
 
-ggplot(mev_tree)+geom_histogram(aes(x=mev_tree$RMSE),
-                                  binwidth = 0.0025, fill='grey', col='black')
-
-t.test(mev_linear$RMSE,mev_tree$RMSE)
-print(paste0("Mean RMSE of linear model is ", mean(mev_linear$RMSE)))
-print(paste0("Mean RMSE of tree model is ", mean(mev_tree$RMSE)))
+```{r}
 mev_all=rbind(mev_linear,mev_tree)
-
 ggplot(mev_all)+geom_boxplot(aes(mev_all$type,mev_all$RMSE, fill=mev_all$type))+
         theme(legend.title = element_blank())+
         labs(x='',y='RMSE', title = 'Boxplots of cross-validation results of different models ')+
         theme(axis.text.x=element_blank())
 ```
 
-From the t.test and distribution plot above we can find that there is no signifcant difference between Decision Tree and Linear Regression. 
+I cannot really tell if the difference is significant, so I run t.test and the t.test result shows insignificant difference.
 
+```{r}
+t.test(mev_linear$RMSE,mev_tree$RMSE)
+```
 
-#### Random Forest
+### 5.2 Random Forest
 
+#### Parameter Tuning:
 
-I applied random forest to the model. For parameter tuning, I tested 500 trees with number of variable as 3, 7, 11. After 1 hour of testing running, when the number of variable is 11, model has the minimum RMSE. Below is the result of the parameter tuning.
+I used the “train” function with method “rf” for random forest parameter optimization. The tuning parameters are the number of trees and the number of randomly selected predictors chosen in each tree. I tested 500 trees with the number of randomly selected predictors as 3, 7, 11. After 1 hour of testing running, when the number of randomly selected predictors is 11, model has the minimum RMSE. I did not test too many parameters due to length of computation time. Below is the result of the parameter tuning.  The final parameter is 500 trees with 11 randomly selected predictors for each tree.
 
 ![](./map/RandomForest.png)
 
-I compared the RMSE distribution of random forest with decision tree and linear regression. We find that random forest signicantly improved the model performance however the model building is much more time consuming.
+#### Model Evaluation:
+
+Below is the boxplot of 40 RMSE test-set results of random forest model in comparison with linear model. Mean RMSE of Random Forest model is 0.1714. We can find random forest achieved significant lower RMSE.
+
 ```{r}
 eva_Forest <- train(log_Price ~., data = house,
                   method='rf',
@@ -568,27 +565,24 @@ eva_Forest <- train(log_Price ~., data = house,
 mev_Forest = data.frame(eva_Forest$resample)
 mev_Forest$type='Random Forest'
 mev_Forest=mev_Forest[,-which(names(mev_Forest)=='Rsquared')]
-
-ggplot(mev_Forest)+geom_histogram(aes(x=mev_Forest$RMSE),
-                                binwidth = 0.0025, fill='grey', col='black')
-
 print(paste0("Mean RMSE of Random Forest model is ", mean(mev_Forest$RMSE)))
 mev_all=rbind(mev_all,mev_Forest)
+```
 
+```{r}
 ggplot(mev_all)+geom_boxplot(aes(mev_all$type,mev_all$RMSE, fill=mev_all$type))+
         theme(legend.title = element_blank())+
         labs(x='',y='RMSE', title = 'Boxplots of cross-validation results of different models ')+
         theme(axis.text.x=element_blank())
-  
 ```
 
-#### Ridge, Lasso, Elastic Regression
+### 5.4 Ridge, Lasso, Elastic Regression
 
-I built the Ridge, Lasso and Elastic Regression regression using 'Caret' package. Tuning the paramter alpha and lambda to find the best parameter combination. When alpha is 0, the model is ridge regression. When alpha is 1, the model is lasso regression. When alpha is between 0 and 1, the model is Elastic regression. Below shows the RMSE for different alpha and lambda combination. We can see that when alpha=0 and lambda=0.1, the model performs best.
+#### Parameter Tuning:
+
+I used “train” function with method “glmnet” and tuned parameter Mixing Percentage (alpha) and Regularization Parameter(lambda) to find the best parameter combination. When alpha is 0, the model is ridge regression. When alpha is 1, the model is lasso regression. When alpha is between 0 and 1, the model is Elastic regression. I tried different parameters to get the best result and below is the summary. We can see when Mixing Percentage is 0 and Regularization Parameter is 0.1, model has the lowest RMSE. I kept Mixing Percentage at 0 and tried regularization parameters below 0.1. I found when regularization parameter is 0.01, the model achieved lowest RMSE.
 
 ![](./map/Elastic1.png)
-
-I want to see if lambda is continuely lowered, the performance could be improved. Below is the result. Keeping alpha 0, lambda= 0.01 is still the best model.
 
 ![](./map/Elastic2.png)
 
@@ -601,14 +595,14 @@ eva_ElasticNet <- train(log_Price ~., data = house,
                         trControl=custom)
 ```
 
+#### Model Evaluation:
+
+I built the model using alpha=0 and lambda=0.01, which is ridge regression. Below is the boxplot of 40 RMSE test-set results of ridge regression model in comparison with previous models. Mean RMSE of ridge regression model is 0.2214. We can find random forest still has the lowest RMSE.
+
 ```{r}
 mev_ElasticNet = data.frame(eva_ElasticNet$resample)
 mev_ElasticNet$type='Ridge Regression'
 mev_ElasticNet=mev_ElasticNet[,-which(names(mev_ElasticNet)=='Rsquared')]
-
-ggplot(mev_ElasticNet)+geom_histogram(aes(x=mev_ElasticNet$RMSE),
-                                  binwidth = 0.0025, fill='grey', col='black')
-
 print(paste0("Mean RMSE of Ridge Regression model is ", mean(mev_ElasticNet$RMSE)))
 mev_all=rbind(mev_all,mev_ElasticNet)
 ggplot(mev_all)+geom_boxplot(aes(mev_all$type,mev_all$RMSE, fill=mev_all$type))+
@@ -617,11 +611,19 @@ ggplot(mev_all)+geom_boxplot(aes(mev_all$type,mev_all$RMSE, fill=mev_all$type))+
         theme(axis.text.x=element_blank())
 
 ```
-#### XGBoost
 
-Applied XGBoost to the model. Below is an example while I was tuning the parameters to find the best performance model. We can see more trees produce better result and 0.1 is the best shrinkage. With the increasing number of trees, the model building becomes slower. The package I use is "caret" and "xgboost". The tuning parameter for the final model are nrounds=500, eta=0.1,gamma=0,max_depth=6,colsample_bytree=1,min_child_weight=1,subsample=1.
+### 5.5 XGBoost
+
+#### Parameter Tuning:
+
+I used “train” function with method “xgbTree” and tuned number of boosting iterations and shrinkage. We can see more iterations produce better result and 0.1 is the best shrinkage. With the increasing number of trees, the model building becomes much slower but the more accurate. It’s very time consuming to tune more than 500 build model on more than 500 trees. The final number of iterations I chose is 500 and 0.1 is value for shrinkage.
 
 ![](./map/xgbboost.png)
+
+#### Model Evaluation:
+
+The tuning parameter for the final model are nrounds=500, eta=0.1, gamma=0,max_depth=6,colsample_bytree=1,min_child_weight=1,subsample=1.
+Below is the boxplot of 40 RMSE test-set results of XGBoost model in comparison with previous models. Mean RMSE of XGBoost model is 0.1591. We can conclude that XGBoost has the lowest RMSEs and outperformed all the other models.
 
 ```{r}
 eva_XGBoost <- train(log_Price ~., data = house,
@@ -636,16 +638,11 @@ eva_XGBoost <- train(log_Price ~., data = house,
                   trControl=custom)
 ```
 
-Below we can find that XGBoost have the best performance among all the models.
 ```{r}
 mev_XGBoost = data.frame(eva_XGBoost$resample)
 mev_XGBoost$type='XGBoost'
 mev_XGBoost=mev_XGBoost[,-which(names(mev_XGBoost)=='Rsquared')]
-
-ggplot(mev_XGBoost)+geom_histogram(aes(x=mev_XGBoost$RMSE),
-                                      binwidth = 0.0025, fill='grey', col='black')
-
-print(paste0("Mean RMSE of Ridge Regression model is ", mean(mev_XGBoost$RMSE)))
+print(paste0("Mean RMSE of XGBoost model is ", mean(mev_XGBoost$RMSE)))
 mev_all=rbind(mev_all,mev_XGBoost)
 ggplot(mev_all)+geom_boxplot(aes(mev_all$type,mev_all$RMSE, fill=mev_all$type))+
         theme(legend.title = element_blank())+
@@ -653,14 +650,13 @@ ggplot(mev_all)+geom_boxplot(aes(mev_all$type,mev_all$RMSE, fill=mev_all$type))+
         theme(axis.text.x=element_blank())
 ```
 
+## 6.	Conclusion
 
-## Conclusion
+We can find that random forest, XGBoost outperform the other models at cost of much longer model building time due to their complexity. There is still some potential to bring the RMSE even lower for random forest and XGBoost because I have not explored all the possible parameter combinations due to my limited laptop computational resources. XGB boost is a very powerful algorithm as it takes less time to build model and more accurate than random forest. 
 
-70 percent of the time spent on data exploration
-log helps. 
-tree model slow to build and tuning parameters but better performance. xgboost is faster to build and performed better than random forest.
+Linear models are simple and very fast to build, easier to interpret compared to random forest and XGBoost. They are also very helpful in exploratory analysis to understand the relevant features. However, their predictions are not as good as those more complex models.
 
-
+Throughout the entire project 80 percent of the time was spent on exploratory analysis and data transformation. It’s crucial to have a good domain knowledge in order to understand the data and the relationship between the features. Proficient data manipulation and feature engineering skills will make you much more efficient to prepare the best dataset for the model tuning and building. This project gave me invaluable hands-on experiences on the many subjects in data science.
 
 ## Reference
 
